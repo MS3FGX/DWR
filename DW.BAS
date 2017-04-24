@@ -1,3 +1,5 @@
+REM: Dope Wars: Resurrection
+REM: This software is released under the BSD license, see LICENSE for details
 DECLARE SUB DRAWBACKGROUND ()
 DECLARE SUB LEVEL0 ()
 DECLARE SUB MAPLEVEL ()
