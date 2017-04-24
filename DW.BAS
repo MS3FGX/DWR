@@ -108,46 +108,6 @@ DIM SHARED BHOUSE%(210)
 DIM SHARED GHOUSE%(210)
 DIM SHARED RHOUSE%(210)
 DIM SHARED BANKTILE%(210)
-VERIFY:
-CLS
-ON ERROR GOTO ErrorHandler
-OPEN "A:\verify.dat" FOR INPUT AS #3
-INPUT #3, VERIFYCODE
-CLOSE #3
-OPEN "C:\DW\DATA\verify.dat" FOR INPUT AS #3
-INPUT #3, SECCODE
-CLOSE #3
-IF INT(SECCODE) = INT((VERIFYCODE + 6834) / 4 * 2) THEN
-	RANDOMIZE TIMER
-	VERIFYCODE = INT(RND * 2000000) + 1
-	SECCODE = INT((VERIFYCODE + 6834) / 4 * 2)
-	OPEN "A:\verify.dat" FOR OUTPUT AS #3
-	WRITE #3, VERIFYCODE
-	CLOSE #3
-	OPEN "C:\DW\DATA\verify.dat" FOR OUTPUT AS #3
-	WRITE #3, SECCODE
-	CLOSE #3
-ELSE
-	CLS
-	PRINT "ERROR!!"
-	PRINT ""
-	PRINT "Invalid verify data found!"
-	DO
-	A$ = INKEY$
-	LOOP WHILE A$ = ""
-	IF A$ = "!" THEN END
-	VERIFYCODE = 0
-	SECCODE = 0
-	OPEN "A:\verify.dat" FOR OUTPUT AS #3
-	WRITE #3, VERIFYCODE
-	CLOSE #3
-	OPEN "C:\DW\DATA\verify.dat" FOR OUTPUT AS #3
-	WRITE #3, SECCODE
-	CLOSE #3
-	KILL "A:\*.*"
-	KILL "C:\DW\*.*"
-	END
-END IF
 OPEN "C:\DW\DATA\TILES\GRASS.TIL" FOR INPUT AS #2
 FOR y = 1 TO 20
 FOR x = 1 TO 20
@@ -1056,24 +1016,6 @@ CLOSE #1
 END IF
 IF R = 1 THEN GOTO DopeStart
 END
-ErrorHandler:
-IF ERR = 71 OR ERR = 53 THEN
-CLS
-PRINT "ERROR!!"
-PRINT ""
-PRINT "There has been an error reading the"
-PRINT "Dope Wars disk!"
-PRINT ""
-PRINT "Please put the Dope Wars Installation"
-PRINT "disk in drive A, and press any key to"
-PRINT "continue. "
-DO
-A$ = INKEY$
-LOOP WHILE A$ = ""
-RESUME VERIFY
-END IF
-END
-
 
 SUB BANK
 
