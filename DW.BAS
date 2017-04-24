@@ -417,30 +417,30 @@ LINE (0, 0)-(10, 200), 7, BF
 LINE (310, 0)-(320, 200), 7, BF
 LINE (0, 190)-(320, 200), 7, BF
 LOCATE 4, 3
-PRINT "Lead Programer: TJ Nardi"
+PRINT "Programer: Tom Nardi"
 LOCATE 6, 3
-PRINT "Art: TJ, Max Nardi"
+PRINT "Art/Level Design: Tom, Max Nardi"
 LOCATE 8, 3
-PRINT "Level Design: TJ, Max"
-LOCATE 10, 3
 PRINT "Game Consultants: David Strapp, Max"
-LOCATE 11, 3
+LOCATE 9, 3
 PRINT "                  Dean Steckel"
-LOCATE 13, 3
+LOCATE 11, 3
 PRINT "Game Testers: David, Dean, Max,"
+LOCATE 12, 3
+PRINT "              Omar Vazquez (RIP)"
+LOCATE 13, 3
+PRINT "              John Rindt"
 LOCATE 14, 3
-PRINT "              Omar Vazquez,"
+PRINT "              Edwin Davila"
 LOCATE 15, 3
-PRINT "              John Rindt,"
-LOCATE 16, 3
-PRINT "              Edwin Davila,"
-LOCATE 17, 3
 PRINT "              Nick Rodkin"
+LOCATE 17, 3
+PRINT "Special Thanks: DOSBox"
+LOCATE 18, 3
+PRINT "                QB64"
 LOCATE 19, 3
-PRINT "Special Thanks: WWW.QB45.COM,"
+PRINT "                DarkDread"
 LOCATE 20, 3
-PRINT "                DarkDread,"
-LOCATE 21, 3
 PRINT "                Omicron Omega"
 PCOPY 1, 0
 CLS
