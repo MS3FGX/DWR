@@ -531,7 +531,7 @@ IF CODEERROR = 0 THEN
     DO
         A$ = INKEY$
     LOOP WHILE A$ = ""
-    OPEN "C:\DW\DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
+    OPEN "DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
     WRITE #1, LEVEL
     WRITE #1, PlayerX%
     WRITE #1, PlayerY%
@@ -1575,8 +1575,8 @@ IF A$ = "O" THEN GOTO OPTIONS2
 IF A$ = "o" THEN GOTO OPTIONS2
 
 IF A$ = "V" OR A$ = "v" THEN
-       
-    OPEN "C:\DW\DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
+
+    OPEN "DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
     WRITE #1, LEVEL
     WRITE #1, PlayerX%
     WRITE #1, PlayerY%
@@ -1720,7 +1720,7 @@ DO
 
     IF A$ = "S" OR A$ = "s" THEN
 
-        OPEN "C:\DW\DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
+        OPEN "DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
         WRITE #1, LEVEL
         WRITE #1, PlayerX%
         WRITE #1, PlayerY%
@@ -1972,7 +1972,7 @@ IF R > 6 AND JND = 0 THEN
         END IF
     
     END IF
-       
+
     PRINT "Selling Drugs"
     PRINT ""
     PRINT "Drug"; TAB(15); "In Stash"; TAB(30); "Price"
@@ -2103,7 +2103,7 @@ IF DDEAL = 1 THEN
     ELSEIF CHOICE = 4 THEN
      
         DPRICE = AMOUNT * APRICE
-      
+
         IF ACID - AMOUNT >= 0 THEN
       
             ACID = ACID - AMOUNT
@@ -2162,7 +2162,7 @@ IF DDEAL = 1 THEN
         DPRICE = AMOUNT * MPRICE
     
         IF MUSHROOMS - AMOUNT >= 0 THEN
-    
+
             MUSHROOMS = MUSHROOMS - AMOUNT
             MONEY = MONEY + DPRICE
        
