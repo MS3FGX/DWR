@@ -260,6 +260,11 @@ CLOSE #1
 START:
 CLS
 SCREEN 12
+REM: Play menu music, have to use a handle so it can be stopped when level loads
+theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
+REM: Set volume low and start playing
+_SNDVOL theme&, 0.3
+_SNDPLAY theme&
 CALL NeatFont("Dope Wars", -1, 190, 15, 9, 6)
 CALL NeatFont("Resurrection", -1, 290, 12, 9, 3)
 DO
@@ -914,6 +919,7 @@ IF NAME$ = "" THEN
 END IF
 IF NAME$ = "" THEN GOTO MAIN
 DWSTART:
+_SNDSTOP theme&
 SCREEN 13
 DO
     SELECT CASE LEVEL
@@ -1931,7 +1937,7 @@ IF R > 6 AND JND = 0 THEN
         IF DIF = 3 THEN
           
             RANDOMIZE TIMER
-        
+
             RAND = INT(RND * N) + 1
 
             IF RAND <= 1 THEN
@@ -2137,7 +2143,7 @@ IF DDEAL = 1 THEN
     
             HASH = HASH - AMOUNT
             MONEY = MONEY + DPRICE
-     
+
         ELSE
 
             DDEAL = 0
@@ -2486,7 +2492,7 @@ ELSEIF CHOICE = 5 THEN
     DPRICE = AMOUNT * COBPRICE
        
     IF MONEY - DPRICE >= 0 THEN
-       
+
         COKE = COKE + AMOUNT
         MONEY = MONEY - DPRICE
         DDEAL = 1
