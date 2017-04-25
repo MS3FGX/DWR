@@ -10,7 +10,9 @@ Development
 
 I was still using MS-DOS as my primary operating system in 2001, and as such the game was developed in QBasic 4.5, which was the only development environment the OS shipped with.
 
-While QB45 can still be run under [DOSBox](https://en.wikipedia.org/wiki/DOSBox) (and indeed, that's how I'm currently working on the source), my plan is to switch over to [QB64](https://en.wikipedia.org/wiki/QB64) and potentially make use of the new capabilities that would bring.
+The project is currently being moved over to [QB64](https://en.wikipedia.org/wiki/QB64), which adds many new features as well as the ability to compile native binaries for modern operating systems.
+
+I've also setup a QB45 branch which retains the original source code, suitable for use with QB 4.5 under [DOSBox](https://en.wikipedia.org/wiki/DOSBox). This is intended as a historical reference point, and I won't be making any changes to it unless some large bug/issue is uncovered.
 
 License
 ==
