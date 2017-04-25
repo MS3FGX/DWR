@@ -261,7 +261,6 @@ START:
 CLS
 SCREEN 12
 CALL NeatFont("Dope Wars", -1, 190, 15, 9, 6)
-CALL NeatFont("Resurrection", -1, 290, 12, 9, 3)
 DO
     A$ = INKEY$
 LOOP WHILE A$ = ""
