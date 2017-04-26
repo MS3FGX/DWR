@@ -426,29 +426,27 @@ LINE (0, 190)-(320, 200), 7, BF
 LOCATE 4, 3
 PRINT "Programer: Tom Nardi"
 LOCATE 6, 3
-PRINT "Art/Level Design: Tom, Max Nardi"
+PRINT "Art/Level Design: Max Nardi"
 LOCATE 8, 3
-PRINT "Game Consultants: David Strapp, Max"
+PRINT "Consultants: David Strapp"
 LOCATE 9, 3
-PRINT "                  Dean Steckel"
+PRINT "             Dean Steckel"
 LOCATE 11, 3
-PRINT "Game Testers: David, Dean, Max,"
+PRINT "Testers: Omar Vazquez (RIP)"
 LOCATE 12, 3
-PRINT "              Omar Vazquez (RIP)"
+PRINT "         John Rindt"
 LOCATE 13, 3
-PRINT "              John Rindt"
+PRINT "         Edwin Davila"
 LOCATE 14, 3
-PRINT "              Edwin Davila"
-LOCATE 15, 3
-PRINT "              Nick Rodkin"
+PRINT "         Nick Rodkin"
+LOCATE 16, 3
+PRINT "Music: Tom Cascino"
 LOCATE 17, 3
-PRINT "Special Thanks: DOSBox"
+PRINT "                "
 LOCATE 18, 3
-PRINT "                QB64"
-LOCATE 19, 3
-PRINT "                DarkDread"
+PRINT "                "
 LOCATE 20, 3
-PRINT "                Omicron Omega"
+PRINT "Special Thanks: DOSBox, QB64"
 PCOPY 1, 0
 CLS
 DO
@@ -2105,7 +2103,7 @@ IF DDEAL = 1 THEN
             DDEAL = 0
 
         END IF
-         
+
     ELSEIF CHOICE = 4 THEN
      
         DPRICE = AMOUNT * APRICE
@@ -2550,7 +2548,7 @@ ELSEIF CHOICE = 8 THEN
         DDEAL = 0
 
     END IF
-      
+
       
 END IF
 
