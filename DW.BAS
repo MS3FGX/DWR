@@ -257,12 +257,13 @@ INPUT #1, JC
 INPUT #1, SC
 INPUT #1, PC
 CLOSE #1
+REM: Load sound files
+theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
+menubeep& = _SNDOPEN("DATA\SFX\BEEP.MP3", "SYNC,VOL")
 START:
 CLS
 SCREEN 12
-REM: Play menu music, have to use a handle so it can be stopped when level loads
-theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
-REM: Set volume low and start playing
+REM: Set volume low and start playing menu music
 _SNDVOL theme&, 0.3
 _SNDPLAY theme&
 CALL NeatFont("Dope Wars", -1, 190, 15, 9, 6)
@@ -293,14 +294,14 @@ DO
     PCOPY 1, 0
     CLS
     A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: SOUND 1396, 2
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: SOUND 1396, 2
+    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: _SNDPLAY menubeep&
+    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: _SNDPLAY menubeep&
     IF y = 3 THEN y = 0
     IF y = -1 THEN y = 2
     IF y = 0 THEN YPOS = 0
     IF y = 1 THEN YPOS = 16
     IF y = 2 THEN YPOS = 32
-LOOP UNTIL A$ = CHR$(32): SOUND 1568, 2
+LOOP UNTIL A$ = CHR$(32): _SNDPLAY menubeep&
 IF y = 0 THEN GOTO STARTGAME
 IF y = 1 THEN GOTO OPTIONS
 IF y = 2 THEN CLS
@@ -331,8 +332,8 @@ DO
     PCOPY 1, 0
     CLS
     A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: SOUND 1396, 2
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: SOUND 1396, 2
+    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: _SNDPLAY menubeep&
+    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: _SNDPLAY menubeep&
     IF y = 5 THEN y = 0
     IF y = -1 THEN y = 4
     IF y = 0 THEN YPOS = 0
@@ -340,7 +341,7 @@ DO
     IF y = 2 THEN YPOS = 32
     IF y = 3 THEN YPOS = 48
     IF y = 4 THEN YPOS = 64
-LOOP UNTIL A$ = CHR$(32): SOUND 1568, 2
+LOOP UNTIL A$ = CHR$(32): _SNDPLAY menubeep&
 IF y = 0 THEN GOTO DIFF
 IF y = 1 THEN GOTO VIEWSAVE
 IF y = 2 THEN GOTO CREDITS
@@ -370,14 +371,14 @@ DO
     PCOPY 1, 0
     CLS
     A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: SOUND 1396, 2
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: SOUND 1396, 2
+    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: _SNDPLAY menubeep&
+    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: _SNDPLAY menubeep&
     IF y = 3 THEN y = 0
     IF y = -1 THEN y = 2
     IF y = 0 THEN YPOS = 0
     IF y = 1 THEN YPOS = 16
     IF y = 2 THEN YPOS = 32
-LOOP UNTIL A$ = CHR$(32): SOUND 1568, 2
+LOOP UNTIL A$ = CHR$(32): _SNDPLAY menubeep&
 IF y = 0 THEN DIF = 1
 IF y = 1 THEN DIF = 2
 IF y = 2 THEN DIF = 3
@@ -597,14 +598,14 @@ DO
     PCOPY 1, 0
     CLS
     A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: SOUND 1396, 2
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: SOUND 1396, 2
+    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: _SNDPLAY menubeep&
+    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: _SNDPLAY menubeep&
     IF y = 3 THEN y = 0
     IF y = -1 THEN y = 2
     IF y = 0 THEN YPOS = 0
     IF y = 1 THEN YPOS = 16
     IF y = 2 THEN YPOS = 32
-LOOP UNTIL A$ = CHR$(32): SOUND 1568, 2
+LOOP UNTIL A$ = CHR$(32): _SNDPLAY menubeep&
 IF y = 0 THEN GOTO NEWGAME
 IF y = 1 THEN GOTO LOADGAME
 IF y = 2 THEN GOTO MAIN
@@ -1094,13 +1095,13 @@ INPUT DEPOMONEY
 IF MONEY - DEPOMONEY <= 0 THEN
 
     CLS
-    
+
     PRINT "You ain't got enough paper foo!"
 
     DO
         A$ = INKEY$
     LOOP WHILE A$ = ""
-       
+
     CLS
 
 END IF
@@ -1108,7 +1109,7 @@ END IF
 
 
 IF MONEY - DEPOMONEY > 0 THEN
-       
+
     MONEY = MONEY - DEPOMONEY
 
     BALANCE = BALANCE + DEPOMONEY
@@ -1138,22 +1139,22 @@ INPUT WITHMONEY
 
 
 IF BALANCE - WITHMONEY < 0 THEN
-      
+
     CLS
-       
+
     PRINT "You ain't got enough paper foo!"
 
     DO
         A$ = INKEY$
     LOOP WHILE A$ = ""
-      
+
     CLS
 
 END IF
 
 
 IF BALANCE - WITHMONEY >= 0 THEN
-      
+
     MONEY = MONEY + WITHMONEY
 
     BALANCE = BALANCE - WITHMONEY
@@ -1213,13 +1214,13 @@ IF ANS$ = "Y" OR ANS$ = "y" THEN
     PRINT ""
     PRINT "Gimme all the money bitch!"
     PRINT ""
-       
+
     DO
         A$ = INKEY$
     LOOP WHILE A$ = ""
 
     CLS
-       
+
     PRINT "The guard is runnin up!!"
     PRINT ""
     PRINT "Stay back mothafucka!!"
@@ -1238,15 +1239,15 @@ IF ANS$ = "Y" OR ANS$ = "y" THEN
     CLS
 
     N = 10
-      
+
     RANDOMIZE TIMER
-        
+
     RAND = INT(RND * N) + 1
 
     IF RAND < 6 THEN
-       
+
         IF DIF = 1 THEN
-           
+
             RANDOMIZE TIMER
          
             RAND = INT(RND * N) + 1
@@ -1257,7 +1258,7 @@ IF ANS$ = "Y" OR ANS$ = "y" THEN
                 BOOTY = 500000
 
             ELSEIF RAND < 6 AND RAND > 1 THEN
-          
+
                 ROB = 1
                 BOOTY = 200000
 
@@ -1267,23 +1268,23 @@ IF ANS$ = "Y" OR ANS$ = "y" THEN
                 BOOTY = 350000
 
             END IF
-           
+
         END IF
 
-      
+
         IF DIF = 2 THEN
-        
+
             RANDOMIZE TIMER
-      
+
             RAND = INT(RND * N) + 1
 
             IF RAND <= 1 THEN
 
                 ROB = 1
                 BOOTY = 100000
-       
+
             ELSEIF RAND < 6 AND RAND > 1 THEN
-       
+
                 ROB = 1
                 BOOTY = 20000
             ELSE
@@ -1309,7 +1310,7 @@ IF ANS$ = "N" OR ANS$ = "n" GOTO ROBN
 IF ROB = 1 THEN
 
     ROB = 0
-       
+
     MONEY = MONEY + BOOTY
 
     CLS
@@ -1329,9 +1330,9 @@ IF ROB = 1 THEN
     CLS
 
 ELSE
-       
+
     CLS
-       
+
     PRINT "And you fuckin miss!!"
     PRINT ""
     PRINT "Damn bitch, you can't aim for shit!"
@@ -1340,7 +1341,7 @@ ELSE
     PRINT "I guess you ain't so lucky after all..."
     PRINT ""
     PRINT "Oh well motherfucker, you know what thatmeans..."
-    
+
     DO
         A$ = INKEY$
     LOOP WHILE A$ = ""
@@ -1377,7 +1378,7 @@ IF QUIT = 1 GOTO BUSDONE
 IF MONEY - 2 <= 0 THEN
 
     BPROX = 0
-       
+
     LOCATE 22, 2
     PRINT "                                      "
 
@@ -1754,10 +1755,10 @@ DO
     IF A$ = "E" THEN QUIT = 1
     IF A$ = "e" THEN QUIT = 1
     IF A$ = "R" OR A$ = "r" THEN
-       
+
         QUIT = 1
         R = 1
-    
+
     END IF
 
 LOOP WHILE A$ = ""
@@ -1829,7 +1830,7 @@ R = INT(RND * 19)
 IF JMF = 1 THEN R = 8
 
 IF R > 6 AND JND = 0 THEN
-       
+
     LOCATE 23, 2
     PRINT "Junkie: Hell yeah, bitch!"
 
@@ -1840,15 +1841,15 @@ IF R > 6 AND JND = 0 THEN
     CLS
 
     IF SLEVEL <> LEVEL THEN
-      
+
         SLEVEL = LEVEL
-       
+
         N = 10
-       
+
         IF DIF = 1 THEN
-        
+
             RANDOMIZE TIMER
-          
+
             RAND = INT(RND * N) + 1
 
             IF RAND <= 1 THEN
@@ -1861,9 +1862,9 @@ IF R > 6 AND JND = 0 THEN
                 HPRICE = 1200
                 HEPRICE = 12000
                 MPRICE = 2000
-                   
+
             ELSEIF RAND < 6 AND RAND > 1 THEN
-           
+
                 PPRICE = 50
                 EPRICE = 110
                 CPRICE = 440
@@ -1872,7 +1873,7 @@ IF R > 6 AND JND = 0 THEN
                 HPRICE = 980
                 HEPRICE = 9500
                 MPRICE = 1600
-                       
+
             ELSE
 
                 PPRICE = 80
@@ -1887,11 +1888,11 @@ IF R > 6 AND JND = 0 THEN
             END IF
         END IF
 
-       
+
         IF DIF = 2 THEN
          
             RANDOMIZE TIMER
-       
+
             RAND = INT(RND * N) + 1
 
             IF RAND <= 1 THEN
@@ -1904,9 +1905,9 @@ IF R > 6 AND JND = 0 THEN
                 HPRICE = 900
                 HEPRICE = 8200
                 MPRICE = 1100
-        
+
             ELSEIF RAND < 6 AND RAND > 1 THEN
-        
+
                 PPRICE = 30
                 EPRICE = 95
                 CPRICE = 400
@@ -1915,7 +1916,7 @@ IF R > 6 AND JND = 0 THEN
                 HPRICE = 800
                 HEPRICE = 8000
                 MPRICE = 900
-                    
+
             ELSE
 
                 PPRICE = 70
@@ -1930,10 +1931,10 @@ IF R > 6 AND JND = 0 THEN
             END IF
 
         END IF
-       
+
 
         IF DIF = 3 THEN
-          
+
             RANDOMIZE TIMER
 
             RAND = INT(RND * N) + 1
@@ -1948,9 +1949,9 @@ IF R > 6 AND JND = 0 THEN
                 HPRICE = 280
                 HEPRICE = 950
                 MPRICE = 260
-         
+
             ELSEIF RAND < 6 AND RAND > 1 THEN
-         
+
                 PPRICE = 10
                 EPRICE = 15
                 CPRICE = 40
@@ -1959,7 +1960,7 @@ IF R > 6 AND JND = 0 THEN
                 HPRICE = 140
                 HEPRICE = 800
                 MPRICE = 200
-                     
+
             ELSE
 
                 PPRICE = 15
@@ -1974,7 +1975,7 @@ IF R > 6 AND JND = 0 THEN
             END IF
 
         END IF
-    
+
     END IF
 
     PRINT "Selling Drugs"
@@ -2036,7 +2037,7 @@ IF R > 6 AND JND = 0 THEN
     IF CHOICE = 7 THEN DRUG$ = "Heroin"
     IF CHOICE = 8 THEN DRUG$ = "Shrooms"
     IF CHOICE >= 9 THEN GOTO DONEDEAL
-       
+
 ELSE
     JND = 1
     LOCATE 23, 2
@@ -2063,7 +2064,7 @@ IF DDEAL = 1 THEN
     IF CHOICE = 1 THEN
 
         DPRICE = AMOUNT * PPRICE
-         
+
         IF POT - AMOUNT >= 0 THEN
          
             POT = POT - AMOUNT
@@ -2076,11 +2077,11 @@ IF DDEAL = 1 THEN
         END IF
 
     ELSEIF CHOICE = 2 THEN
-       
+
         DPRICE = AMOUNT * EPRICE
-        
+
         IF ECSTACY - AMOUNT >= 0 THEN
-        
+
             ECSTACY = ECSTACY - AMOUNT
             MONEY = MONEY + DPRICE
         ELSE
@@ -2090,11 +2091,11 @@ IF DDEAL = 1 THEN
         END IF
 
     ELSEIF CHOICE = 3 THEN
-      
+
         DPRICE = AMOUNT * CPRICE
-       
+
         IF CRACK - AMOUNT >= 0 THEN
-       
+
             CRACK = CRACK - AMOUNT
             MONEY = MONEY + DPRICE
          
@@ -2109,7 +2110,7 @@ IF DDEAL = 1 THEN
         DPRICE = AMOUNT * APRICE
 
         IF ACID - AMOUNT >= 0 THEN
-      
+
             ACID = ACID - AMOUNT
             MONEY = MONEY + DPRICE
          
@@ -2118,27 +2119,27 @@ IF DDEAL = 1 THEN
             DDEAL = 0
 
         END IF
-       
+
     ELSEIF CHOICE = 5 THEN
-    
+
         DPRICE = AMOUNT * COPRICE
      
         IF COKE - AMOUNT >= 0 THEN
-     
+
             COKE = COKE - AMOUNT
             MONEY = MONEY + DPRICE
-        
+
         ELSE
 
             DDEAL = 0
 
         END IF
     ELSEIF CHOICE = 6 THEN
-   
+
         DPRICE = AMOUNT * HPRICE
-    
+
         IF HASH - AMOUNT >= 0 THEN
-    
+
             HASH = HASH - AMOUNT
             MONEY = MONEY + DPRICE
 
@@ -2148,34 +2149,34 @@ IF DDEAL = 1 THEN
 
         END IF
     ELSEIF CHOICE = 7 THEN
-   
+
         DPRICE = AMOUNT * HEPRICE
-    
+
         IF HEROIN - AMOUNT >= 0 THEN
-    
+
             HEROIN = HEROIN - AMOUNT
             MONEY = MONEY + DPRICE
-       
+
         ELSE
 
             DDEAL = 0
 
         END IF
     ELSEIF CHOICE = 8 THEN
-   
+
         DPRICE = AMOUNT * MPRICE
-    
+
         IF MUSHROOMS - AMOUNT >= 0 THEN
 
             MUSHROOMS = MUSHROOMS - AMOUNT
             MONEY = MONEY + DPRICE
-       
+
         ELSE
 
             DDEAL = 0
 
         END IF
-       
+
     END IF
 
 END IF
@@ -2184,7 +2185,7 @@ END IF
 IF DDEAL = 1 AND AMOUNT >= 1 THEN
 
     CLS
-     
+
     PRINT "Hell Yeah!"
     PRINT ""
     PRINT "You sold"; AMOUNT; " "; DRUG$; " for"; DPRICE; "bucks!"
@@ -2192,7 +2193,7 @@ IF DDEAL = 1 AND AMOUNT >= 1 THEN
     DO
         A$ = INKEY$
     LOOP WHILE A$ = ""
-    
+
     CLS
 
 END IF
@@ -2201,15 +2202,15 @@ END IF
 IF DDEAL = 0 AND AMOUNT >= 1 THEN
 
     CLS
-      
+
     PRINT "You ain't got enough "; DRUG$; " foo!"
 
     DO
         A$ = INKEY$
     LOOP WHILE A$ = ""
-     
+
     CLS
-       
+
     DDEAL = 0
 
 END IF
@@ -2239,15 +2240,15 @@ LOOP WHILE A$ = ""
 CLS
 
 IF BLEVEL <> LEVEL THEN
-       
+
     BLEVEL = LEVEL
-       
+
     N = 10
-      
+
     IF DIF = 1 THEN
-           
+
         RANDOMIZE TIMER
-         
+
         RAND = INT(RND * N) + 1
 
         IF RAND <= 1 THEN
@@ -2260,9 +2261,9 @@ IF BLEVEL <> LEVEL THEN
             HBPRICE = 1400
             HEBPRICE = 18000
             MBPRICE = 1800
-          
+
         ELSEIF RAND < 6 AND RAND > 1 THEN
-          
+
             PBPRICE = 30
             EBPRICE = 90
             CBPRICE = 400
@@ -2271,7 +2272,7 @@ IF BLEVEL <> LEVEL THEN
             HBPRICE = 900
             HEBPRICE = 8900
             MBPRICE = 1200
-                      
+
         ELSE
 
             PBPRICE = 85
@@ -2286,11 +2287,11 @@ IF BLEVEL <> LEVEL THEN
         END IF
     END IF
 
-      
+
     IF DIF = 2 THEN
-        
+
         RANDOMIZE TIMER
-      
+
         RAND = INT(RND * N) + 1
 
         IF RAND <= 1 THEN
@@ -2303,9 +2304,9 @@ IF BLEVEL <> LEVEL THEN
             HBPRICE = 800
             HEBPRICE = 8000
             MBPRICE = 1800
-       
+
         ELSEIF RAND < 6 AND RAND > 1 THEN
-       
+
             PBPRICE = 20
             EBPRICE = 90
             CBPRICE = 370
@@ -2314,7 +2315,7 @@ IF BLEVEL <> LEVEL THEN
             HBPRICE = 610
             HEBPRICE = 6500
             MBPRICE = 820
-                   
+
         ELSE
 
             PBPRICE = 75
@@ -2329,12 +2330,12 @@ IF BLEVEL <> LEVEL THEN
         END IF
 
     END IF
-      
+
 
     IF DIF = 3 THEN
-         
+
         RANDOMIZE TIMER
-       
+
         RAND = INT(RND * N) + 1
 
         IF RAND <= 1 THEN
@@ -2347,9 +2348,9 @@ IF BLEVEL <> LEVEL THEN
             HBPRICE = 270
             HEBPRICE = 940
             MBPRICE = 210
-        
+
         ELSEIF RAND < 6 AND RAND > 1 THEN
-        
+
             PBPRICE = 5
             EBPRICE = 10
             CBPRICE = 30
@@ -2358,7 +2359,7 @@ IF BLEVEL <> LEVEL THEN
             HBPRICE = 120
             HEBPRICE = 740
             MBPRICE = 200
-                    
+
         ELSE
 
             PBPRICE = 25
@@ -2373,7 +2374,7 @@ IF BLEVEL <> LEVEL THEN
         END IF
 
     END IF
-      
+
 END IF
 
 PRINT "Buying Drugs"
@@ -2425,9 +2426,9 @@ IF AMOUNT < 0 THEN DDEAL = 0: CHOICE = 0
 IF CHOICE = 1 THEN
 
     DPRICE = AMOUNT * PBPRICE
-        
+
     IF MONEY - DPRICE >= 0 THEN
-        
+
         POT = POT + AMOUNT
         MONEY = MONEY - DPRICE
         DDEAL = 1
@@ -2439,11 +2440,11 @@ IF CHOICE = 1 THEN
     END IF
 
 ELSEIF CHOICE = 2 THEN
-      
+
     DPRICE = AMOUNT * EBPRICE
-       
+
     IF MONEY - DPRICE >= 0 THEN
-       
+
         ECSTACY = ECSTACY + AMOUNT
         MONEY = MONEY - DPRICE
         DDEAL = 1
@@ -2451,29 +2452,29 @@ ELSEIF CHOICE = 2 THEN
     ELSE
 
         DDEAL = 0
-        
+
     END IF
 
 ELSEIF CHOICE = 3 THEN
-     
+
     DPRICE = AMOUNT * CBPRICE
-      
+
     IF MONEY - DPRICE >= 0 THEN
-      
+
         CRACK = CRACK + AMOUNT
         MONEY = MONEY - DPRICE
         DDEAL = 1
 
     ELSE
-               
+
         DDEAL = 0
 
     END IF
-        
+
 ELSEIF CHOICE = 4 THEN
-    
+
     DPRICE = AMOUNT * ABPRICE
-     
+
     IF MONEY - DPRICE >= 0 THEN
      
         ACID = ACID + AMOUNT
@@ -2488,7 +2489,7 @@ ELSEIF CHOICE = 4 THEN
 ELSEIF CHOICE = 5 THEN
 
     DPRICE = AMOUNT * COBPRICE
-       
+
     IF MONEY - DPRICE >= 0 THEN
 
         COKE = COKE + AMOUNT
@@ -2502,11 +2503,11 @@ ELSEIF CHOICE = 5 THEN
     END IF
 
 ELSEIF CHOICE = 6 THEN
-     
+
     DPRICE = AMOUNT * HBPRICE
-      
+
     IF MONEY - DPRICE >= 0 THEN
-      
+
         HASH = HASH + AMOUNT
         MONEY = MONEY - DPRICE
         DDEAL = 1
@@ -2514,13 +2515,13 @@ ELSEIF CHOICE = 6 THEN
     ELSE
 
         DDEAL = 0
-       
+
     END IF
 
 ELSEIF CHOICE = 7 THEN
-    
+
     DPRICE = AMOUNT * HEBPRICE
-     
+
     IF MONEY - DPRICE >= 0 THEN
      
         HEROIN = HEROIN + AMOUNT
@@ -2528,17 +2529,17 @@ ELSEIF CHOICE = 7 THEN
         DDEAL = 1
 
     ELSE
-              
+
         DDEAL = 0
 
     END IF
-       
+
 ELSEIF CHOICE = 8 THEN
-   
+
     DPRICE = AMOUNT * MBPRICE
-    
+
     IF MONEY - DPRICE >= 0 THEN
-    
+
         MUSHROOMS = MUSHROOMS + AMOUNT
         MONEY = MONEY - DPRICE
         DDEAL = 1
@@ -2549,14 +2550,14 @@ ELSEIF CHOICE = 8 THEN
 
     END IF
 
-      
+
 END IF
 
 
 IF DDEAL = 1 AND AMOUNT >= 1 THEN
 
     CLS
-    
+
     PRINT "Hell Yeah!"
     PRINT ""
     PRINT "You bought"; AMOUNT; " "; DRUG$; " for"; DPRICE; "bucks!"
@@ -2564,7 +2565,7 @@ IF DDEAL = 1 AND AMOUNT >= 1 THEN
     DO
         A$ = INKEY$
     LOOP WHILE A$ = ""
-   
+
     CLS
 
 END IF
@@ -2573,15 +2574,15 @@ END IF
 IF DDEAL = 0 AND AMOUNT >= 1 THEN
 
     CLS
-     
+
     PRINT "You ain't got enough paper foo!"
 
     DO
         A$ = INKEY$
     LOOP WHILE A$ = ""
-    
+
     CLS
-      
+
     DDEAL = 0
 
 END IF
@@ -2911,7 +2912,7 @@ FOR y% = 0 TO 15
             END IF
             IF sty% = 7 THEN PAINT (sx2% - (size% / 2), sy% - (size% / 2)), clr%
             IF sty% = 8 THEN LINE (sx2%, sy% - size%)-(sx2% - size%, sy%), clr%
- 
+
             IF sty% = 9 THEN LINE (sx2% - size%, sy% - size%)-(sx2%, sy%), clr%
         END IF
         sx2% = sx2% + size%
