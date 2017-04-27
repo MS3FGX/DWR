@@ -14,6 +14,7 @@ DIM SHARED txt AS STRING, sx%, sy%, clr%, sty%, size%
 DECLARE SUB ENDING ()
 DECLARE SUB GAMEOVER ()
 DopeStart:
+CLS
 CLEAR
 PRINT "Loading..."
 DIM SHARED A$
@@ -299,7 +300,7 @@ DO
     LOCATE 12, 15
     PRINT " Options"
     LOCATE 14, 15
-    PRINT " End Game"
+    PRINT " Quit"
     LINE (109, YPOS + 69)-(211, YPOS + 69), 6
     LINE (109, YPOS + 81)-(211, YPOS + 81), 6
     LINE (109, YPOS + 69)-(109, YPOS + 81), 6
@@ -398,6 +399,23 @@ IF y = 2 THEN DIF = 3
 GOTO OPTIONS
 VIEWSAVE:
 CLS
+
+REM: Check to see if there is a save
+IF NAME$ = "" THEN
+    SCREEN 13
+    LINE (0, 0)-(320, 10), 7, BF
+    LINE (0, 0)-(10, 200), 7, BF
+    LINE (310, 0)-(320, 200), 7, BF
+    LINE (0, 190)-(320, 200), 7, BF
+    LOCATE 12, 12
+    PRINT "No saved game found"
+    DO
+        A$ = INKEY$
+    LOOP WHILE A$ = ""
+    SCREEN 7, 0, 1, 0
+END IF
+IF NAME$ = "" THEN GOTO OPTIONS
+
 LINE (0, 0)-(320, 10), 7, BF
 LINE (0, 0)-(10, 200), 7, BF
 LINE (310, 0)-(320, 200), 7, BF
@@ -418,13 +436,6 @@ LOCATE 18, 3
 PRINT TAB(5); "Coke:"; COKE; TAB(20); "Hash:"; HASH
 LOCATE 20, 3
 PRINT TAB(5); "Heroin:"; HEROIN; TAB(20); "Shrooms:"; MUSHROOMS
-LINE (240, 23)-(270, 43), 15, B
-LINE (255, 32)-(255, 33), SKNC
-LINE (254, 33)-(256, 33), JC
-PSET (255, 33), SC
-PSET (255, 34), PC
-PSET (256, 35), PC
-PSET (254, 35), PC
 PCOPY 1, 0
 CLS
 DO
@@ -622,6 +633,7 @@ LOOP UNTIL A$ = CHR$(32): _SNDPLAY menubeep&
 IF y = 0 THEN GOTO NEWGAME
 IF y = 1 THEN GOTO LOADGAME
 IF y = 2 THEN GOTO MAIN
+
 NEWGAME:
 LEVEL = 0
 PlayerX% = 7
@@ -651,7 +663,7 @@ DO
     LINE (310, 0)-(320, 200), 7, BF
     LINE (0, 190)-(320, 200), 7, BF
     LOCATE 3, 3
-    INPUT "Enter your first name.", NAME$
+    INPUT "Enter name: ", NAME$
     IF LEN(NAME$) >= 11 THEN
         LOCATE 3, 3
         PRINT "                                    "
@@ -661,238 +673,9 @@ DO
             A$ = INKEY$
         LOOP WHILE A$ = ""
     END IF
-LOOP UNTIL LEN(NAME$) <= 10
-STARTGAME2:
-CLS
-SCREEN 7, 0, 1, 0
-YPOS = 32
-y = 0
-DO
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 6, 14
-    PRINT "Your Character"
-    LINE (155, 77)-(155, 78), SKNC
-    LINE (154, 78)-(156, 78), JC
-    PSET (155, 78), SC
-    PSET (155, 79), PC
-    PSET (156, 80), PC
-    PSET (154, 80), PC
-    LOCATE 14, 15
-    PRINT " Edit"
-    LOCATE 16, 15
-    PRINT " Continue"
-    LOCATE 18, 15
-    PRINT " Cancel"
-    LINE (109, YPOS + 69)-(211, YPOS + 69), 6
-    LINE (109, YPOS + 81)-(211, YPOS + 81), 6
-    LINE (109, YPOS + 69)-(109, YPOS + 81), 6
-    LINE (211, YPOS + 69)-(211, YPOS + 81), 6
-    PCOPY 1, 0
-    CLS
-    A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: SOUND 1396, 2
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: SOUND 1396, 2
-    IF y = 3 THEN y = 0
-    IF y = -1 THEN y = 2
-    IF y = 0 THEN YPOS = 32
-    IF y = 1 THEN YPOS = 48
-    IF y = 2 THEN YPOS = 64
-LOOP UNTIL A$ = CHR$(32): SOUND 1568, 2
-IF y = 0 GOTO CEDIT
-IF y = 1 GOTO DWSTART
-IF y = 2 THEN GOTO MAIN
-CLS
-GOTO MAIN
-CEDIT:
-CLS
-YPOS = 32
-y = 0
-DO
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 6, 13
-    PRINT "Create a Dealer"
-    LINE (155, 67)-(155, 68), SKNC
-    LINE (154, 68)-(156, 68), JC
-    PSET (155, 68), SC
-    PSET (155, 69), PC
-    PSET (156, 70), PC
-    PSET (154, 70), PC
-    LOCATE 12, 15
-    PRINT " Race"
-    LOCATE 14, 15
-    PRINT " Jacket"
-    LOCATE 16, 15
-    PRINT " Shirt"
-    LOCATE 18, 15
-    PRINT " Pants"
-    LOCATE 20, 15
-    PRINT " Done"
-    LINE (109, YPOS + 69)-(211, YPOS + 69), 6
-    LINE (109, YPOS + 81)-(211, YPOS + 81), 6
-    LINE (109, YPOS + 69)-(109, YPOS + 81), 6
-    LINE (211, YPOS + 69)-(211, YPOS + 81), 6
-    PCOPY 1, 0
-    CLS
-    A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: SOUND 1396, 2
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: SOUND 1396, 2
-    IF y = 5 THEN y = 0
-    IF y = -1 THEN y = 4
-    IF y = 0 THEN YPOS = 16
-    IF y = 1 THEN YPOS = 32
-    IF y = 2 THEN YPOS = 48
-    IF y = 3 THEN YPOS = 64
-    IF y = 4 THEN YPOS = 80
-LOOP UNTIL A$ = CHR$(32): SOUND 1568, 2
-IF y = 1 THEN EDITNAME$ = "Jacket Color": EDIT = 1
-IF y = 2 THEN EDITNAME$ = "Shirt Color": EDIT = 2
-IF y = 3 THEN EDITNAME$ = "Pants Color": EDIT = 3
-IF y = 4 THEN GOTO STARTGAME2
-IF y > 0 AND y <= 3 THEN GOTO EDIT
-IF y = 0 THEN
-    CLS
-    SCREEN 7, 0, 1, 0
-    YPOS = 32
-    y = 0
-    DO
-        LINE (0, 0)-(320, 10), 7, BF
-        LINE (0, 0)-(10, 200), 7, BF
-        LINE (310, 0)-(320, 200), 7, BF
-        LINE (0, 190)-(320, 200), 7, BF
-        LOCATE 6, 14
-        PRINT "Select Race"
-        LINE (155, 77)-(155, 78), SKNC
-        LINE (154, 78)-(156, 78), JC
-        PSET (155, 78), SC
-        PSET (155, 79), PC
-        PSET (156, 80), PC
-        PSET (154, 80), PC
-        LOCATE 14, 15
-        PRINT " Black"
-        LOCATE 16, 15
-        PRINT " White"
-        LINE (109, YPOS + 69)-(211, YPOS + 69), 6
-        LINE (109, YPOS + 81)-(211, YPOS + 81), 6
-        LINE (109, YPOS + 69)-(109, YPOS + 81), 6
-        LINE (211, YPOS + 69)-(211, YPOS + 81), 6
-        PCOPY 1, 0
-        CLS
-        A$ = INKEY$
-        IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: SOUND 1396, 2
-        IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: SOUND 1396, 2
-        IF y = 2 THEN y = 0
-        IF y = -1 THEN y = 1
-        IF y = 0 THEN YPOS = 32
-        IF y = 1 THEN YPOS = 48
-    LOOP UNTIL A$ = CHR$(32): SOUND 1568, 2
-    IF y = 0 THEN
-        IF JC = SKNC THEN JC = 6
-        IF SC = SKNC THEN SC = 6
-        SKNC = 6
-    END IF
-    IF y = 1 THEN
-        IF JC = SKNC THEN JC = 12
-        IF SC = SKNC THEN SC = 12
-        SKNC = 12
-    END IF
-END IF
-CLS
-GOTO CEDIT
-EDIT:
-CLS
-IF EDIT = 1 OR EDIT = 2 THEN y = -1 ELSE y = 0
-DO
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 6, 15
-    PRINT EDITNAME$
-    LINE (155, 67)-(155, 68), SKNC
-    LINE (154, 68)-(156, 68), JC
-    PSET (155, 68), SC
-    PSET (155, 69), PC
-    PSET (156, 70), PC
-    PSET (154, 70), PC
-    IF EDIT = 1 OR EDIT = 2 THEN
-        LOCATE 12, 15
-        PRINT " None"
-        LOCATE 14, 15
-        PRINT " Blue"
-        LOCATE 16, 15
-        PRINT " Red"
-        LOCATE 18, 15
-        PRINT " Green"
-        LOCATE 20, 15
-        PRINT " Yellow"
-        LOCATE 22, 15
-        PRINT " White"
-    END IF
-    IF EDIT = 3 THEN
-        LOCATE 12, 15
-        PRINT " Blue"
-        LOCATE 14, 15
-        PRINT " Red"
-        LOCATE 16, 15
-        PRINT " Green"
-        LOCATE 18, 15
-        PRINT " Yellow"
-        LOCATE 20, 15
-        PRINT " White"
-    END IF
-    LINE (109, YPOS + 69)-(211, YPOS + 69), 6
-    LINE (109, YPOS + 81)-(211, YPOS + 81), 6
-    LINE (109, YPOS + 69)-(109, YPOS + 81), 6
-    LINE (211, YPOS + 69)-(211, YPOS + 81), 6
-    PCOPY 1, 0
-    CLS
-    A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: SOUND 1396, 2
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: SOUND 1396, 2
-    IF EDIT = 1 OR EDIT = 2 THEN
-        IF y = 5 THEN y = -1
-        IF y = -2 THEN y = 4
-        IF y = -1 THEN YPOS = 16
-        IF y = 0 THEN YPOS = 32
-        IF y = 1 THEN YPOS = 48
-        IF y = 2 THEN YPOS = 64
-        IF y = 3 THEN YPOS = 80
-        IF y = 4 THEN YPOS = 96
-    END IF
-    IF EDIT = 3 THEN
-        IF y = 5 THEN y = 0
-        IF y = -1 THEN y = 4
-        IF y = 0 THEN YPOS = 16
-        IF y = 1 THEN YPOS = 32
-        IF y = 2 THEN YPOS = 48
-        IF y = 3 THEN YPOS = 64
-        IF y = 4 THEN YPOS = 80
-    END IF
-LOOP UNTIL A$ = CHR$(32): SOUND 1568, 2
-IF EDIT = 1 AND y = -1 THEN JC = SKNC
-IF EDIT = 1 AND y = 0 THEN JC = 1
-IF EDIT = 1 AND y = 1 THEN JC = 4
-IF EDIT = 1 AND y = 2 THEN JC = 2
-IF EDIT = 1 AND y = 3 THEN JC = 14
-IF EDIT = 1 AND y = 4 THEN JC = 15
-IF EDIT = 2 AND y = -1 THEN SC = SKNC
-IF EDIT = 2 AND y = 0 THEN SC = 1
-IF EDIT = 2 AND y = 1 THEN SC = 4
-IF EDIT = 2 AND y = 2 THEN SC = 2
-IF EDIT = 2 AND y = 3 THEN SC = 14
-IF EDIT = 2 AND y = 4 THEN SC = 15
-IF EDIT = 3 AND y = 0 THEN PC = 1
-IF EDIT = 3 AND y = 1 THEN PC = 4
-IF EDIT = 3 AND y = 2 THEN PC = 2
-IF EDIT = 3 AND y = 3 THEN PC = 14
-IF EDIT = 3 AND y = 4 THEN PC = 15
-GOTO CEDIT
+LOOP UNTIL LEN(NAME$) <= 10 AND LEN(NAME$) > 0
+GOTO DWSTART
+
 LOADGAME:
 OPEN "DATA\DOPEWARS.DAT" FOR INPUT AS #1
 INPUT #1, LEVEL
@@ -929,8 +712,9 @@ IF NAME$ = "" THEN
     LOOP WHILE A$ = ""
     SCREEN 7, 0, 1, 0
 END IF
-IF NAME$ = "" THEN GOTO MAIN
+IF NAME$ = "" THEN GOTO STARTGAME
 DWSTART:
+CLS
 _SNDSTOP theme&
 SCREEN 13
 DO
