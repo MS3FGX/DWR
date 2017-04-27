@@ -15,6 +15,7 @@ DECLARE SUB ENDING ()
 DECLARE SUB GAMEOVER ()
 DopeStart:
 CLEAR
+PRINT "Loading..."
 DIM SHARED A$
 DIM SHARED LEVEL
 LEVEL = 0
@@ -92,7 +93,7 @@ BLEVEL = 99
 DIM SHARED GOVER
 DIM SHARED INTRATE
 DIM SHARED JND
-SCREEN 13
+
 REM: Traversable
 DIM SHARED GRASS%(210)
 DIM SHARED FOREST%(210)
@@ -110,6 +111,20 @@ DIM SHARED BHOUSE%(210)
 DIM SHARED GHOUSE%(210)
 DIM SHARED RHOUSE%(210)
 DIM SHARED BANKTILE%(210)
+
+REM: Load sound files
+theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
+menubeep& = _SNDOPEN("DATA\SFX\BEEP.MP3", "SYNC,VOL")
+ambientcity& = _SNDOPEN("DATA\SFX\CITY.MP3", "SYNC,VOL")
+ambientpark& = _SNDOPEN("DATA\SFX\PARK.MP3", "SYNC,VOL")
+
+REM: Default sound volumes
+_SNDVOL theme&, 0.3
+_SNDVOL ambientcity&, 0.2
+_SNDVOL ambientpark&, 0.2
+
+REM: Load graphics files
+SCREEN 13
 OPEN "DATA\TILES\GRASS.TIL" FOR INPUT AS #2
 FOR y = 1 TO 20
     FOR x = 1 TO 20
@@ -257,15 +272,13 @@ INPUT #1, JC
 INPUT #1, SC
 INPUT #1, PC
 CLOSE #1
-REM: Load sound files
-theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
-menubeep& = _SNDOPEN("DATA\SFX\BEEP.MP3", "SYNC,VOL")
+
 START:
 CLS
 SCREEN 12
-REM: Set volume low and start playing menu music
-_SNDVOL theme&, 0.3
+REM: Start playing menu music
 _SNDPLAY theme&
+
 CALL NeatFont("Dope Wars", -1, 190, 15, 9, 6)
 CALL NeatFont("Resurrection", -1, 290, 12, 9, 3)
 DO
@@ -921,6 +934,15 @@ DWSTART:
 _SNDSTOP theme&
 SCREEN 13
 DO
+    REM: Play ambient loop depending on map
+    IF LEVEL = 2 THEN
+        _SNDSTOP ambientcity&
+        _SNDLOOP ambientpark&
+    ELSE
+        _SNDSTOP ambientpark&
+        _SNDLOOP ambientcity&
+    END IF
+
     SELECT CASE LEVEL
         CASE 0
             REDIM SHARED MAP%(0 TO 15, 0 TO 7)
