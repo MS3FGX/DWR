@@ -1,5 +1,6 @@
 REM: Dope Wars: Resurrection
 REM: This software is released under the BSD license, see LICENSE for details
+$RESIZE:SMOOTH
 DECLARE SUB DRAWBACKGROUND ()
 DECLARE SUB LEVEL0 ()
 DECLARE SUB MAPLEVEL ()
@@ -276,15 +277,18 @@ CLOSE #1
 
 START:
 CLS
-SCREEN 12
 REM: Start playing menu music
 _SNDPLAY theme&
 
-CALL NeatFont("Dope Wars", -1, 190, 15, 9, 6)
-CALL NeatFont("Resurrection", -1, 290, 12, 9, 3)
+REM: Create screen and show splash image
+SCREEN _NEWIMAGE(800, 600, 32)
+splash& = _LOADIMAGE("DATA\SPLASH.PNG")
+_PUTIMAGE (0, 0), splash&
+
 DO
     A$ = INKEY$
 LOOP WHILE A$ = ""
+
 SCREEN 7, 0, 1, 0
 MAIN:
 CLS
