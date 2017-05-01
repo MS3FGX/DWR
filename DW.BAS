@@ -114,18 +114,30 @@ DIM SHARED GHOUSE%(210)
 DIM SHARED RHOUSE%(210)
 DIM SHARED BANKTILE%(210)
 
+REM: Some variables need to be defined global as they are to be used in SUBs
+DIM SHARED street&
+DIM SHARED buswindows&
+DIM SHARED busnoise&
+
 REM: Load sound files
 theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
 menubeep& = _SNDOPEN("DATA\SFX\BEEP.MP3", "SYNC,VOL")
 ambientcity& = _SNDOPEN("DATA\SFX\CITY.MP3", "SYNC,VOL")
 ambientpark& = _SNDOPEN("DATA\SFX\PARK.MP3", "SYNC,VOL")
+busnoise& = _SNDOPEN("DATA\SFX\BUS.MP3", "VOL")
+
+REM: Load image files
+SCREEN _NEWIMAGE(800, 600, 32)
+buswindows& = _LOADIMAGE("DATA\IMG\BUS.PNG")
+street& = _LOADIMAGE("DATA\IMG\STREET.PNG")
+
 
 REM: Default sound volumes
 _SNDVOL theme&, 0.3
 _SNDVOL ambientcity&, 0.2
 _SNDVOL ambientpark&, 0.2
 
-REM: Load graphics files
+REM: Load graphic tiles
 SCREEN 13
 OPEN "DATA\TILES\GRASS.TIL" FOR INPUT AS #2
 FOR y = 1 TO 20
@@ -1230,7 +1242,6 @@ IF ANS$ = "n" THEN GOTO BUSDONE
 
 GOTO BUSDONE
 
-
 BUSYES:
 
 CLS
@@ -1250,93 +1261,46 @@ PRINT "9.Cancel"
 PRINT ""
 INPUT "Where you goin?", AREA
 
-
 IF AREA >= 9 THEN GOTO BUSDONE
 
-
+REM: Play bus driving animation
 IF FMV = 1 THEN
+    SCREEN _NEWIMAGE(800, 600, 32)
 
-    SCREEN 7, 0, 1, 0
+    FRAME = 0
+    MOVEOFFSET = 32
+    MOVELENGTH = 50
 
-    FOR x = 200 TO -350 STEP -2
+    REM: Start playing audio out of animation loop, stop ambient tracks first
+    _SNDSTOP ambientpark&
+    _SNDSTOP ambientcity&
+    _SNDPLAY busnoise&
+    DO
+        _PUTIMAGE ((-1700 + (FRAME * MOVEOFFSET)), 0), street&
+        _PUTIMAGE (0, 0), buswindows&
 
-        PCOPY 1, 0
+        REM: Hold first frame longer
+        IF FRAME = 0 THEN
+            _DELAY 1
+        ELSE
+            _DELAY .1
+        END IF
 
-        CLS
+        REM: Update display and increment counter
+        _DISPLAY
+        FRAME = FRAME + 1
+    LOOP UNTIL FRAME = MOVELENGTH
 
-        REM BACKGROUND
-        LINE (0, 130)-(320, 130), 8
-        PAINT (0, 170), 8
+    REM: End audio
+    _SNDSTOP busnoise&
 
-        REM WHEELS
-        CIRCLE (x + 270, 140), 15, 0
-        CIRCLE (x + 120, 140), 15, 0
-        PAINT (x + 106, 141), 0
-        PAINT (x + 134, 141), 0
-        PAINT (x + 256, 141), 0
-        PAINT (x + 284, 141), 0
+    REM: Turn auto redraw back on
+    _AUTODISPLAY
 
-        REM BUS BODY
-        LINE (x + 110, 80)-(x + 300, 80)
-        LINE (x + 110, 80)-(x + 90, 113)
-        LINE (x + 300, 80)-(x + 300, 113)
-        LINE (x + 90, 113)-(x + 300, 113)
-        LINE (x + 90, 140)-(x + 300, 140), 1
-        LINE (x + 90, 140)-(x + 90, 115), 1
-        LINE (x + 90, 115)-(x + 300, 115), 1
-        LINE (x + 300, 140)-(x + 300, 115), 1
-        LINE (x + 301, 135)-(x + 305, 140), 0, BF
-        PAINT (x + 92, 112)
-        PAINT (x + 299, 112)
-        PAINT (x + 91, 120), 1
-        PAINT (x + 299, 120), 1
-
-        REM WINDOWS
-        LINE (x + 106, 85)-(x + 91, 110), 9
-        LINE (x + 106, 85)-(x + 125, 85), 9
-        LINE (x + 91, 110)-(x + 125, 110), 9
-        LINE (x + 125, 85)-(x + 125, 110), 9
-        PAINT (x + 93, 109), 9
-        PAINT (x + 124, 109), 9
-
-        LINE (x + 140, 85)-(x + 140, 110), 9
-        LINE (x + 190, 85)-(x + 190, 110), 9
-        LINE (x + 140, 85)-(x + 190, 85), 9
-        LINE (x + 140, 110)-(x + 190, 110), 9
-        PAINT (x + 141, 90), 9
-        PAINT (x + 189, 90), 9
-
-        LINE (x + 205, 85)-(x + 205, 110), 9
-        LINE (x + 255, 85)-(x + 255, 110), 9
-        LINE (x + 205, 85)-(x + 255, 85), 9
-        LINE (x + 205, 110)-(x + 255, 110), 9
-        PAINT (x + 206, 90), 9
-        PAINT (x + 254, 90), 9
-
-        LINE (x + 270, 85)-(x + 270, 110), 9
-        LINE (x + 300, 85)-(x + 300, 110), 9
-        LINE (x + 270, 85)-(x + 300, 85), 9
-        LINE (x + 270, 110)-(x + 300, 110), 9
-        PAINT (x + 271, 90), 9
-        PAINT (x + 299, 90), 9
-
-        REM BANNER
-
-        LINE (x + 155, 118)-(x + 235, 118), 15
-        LINE (x + 155, 136)-(x + 235, 136), 15
-        LINE (x + 155, 118)-(x + 155, 136), 15
-        LINE (x + 235, 118)-(x + 235, 136), 15
-        PAINT (x + 156, 127), 15
-        PAINT (x + 234, 127), 15
-
-    NEXT x
+    REM: Return to normal SCREEN
+    SCREEN 13
 
 END IF
-
-
-SCREEN 13
-
-CLS
 
 IF ROC = 0 THEN
 
@@ -1365,7 +1329,6 @@ BUSDONE:
 END SUB
 
 SUB COMMANDS
-
 
 LINE (0, 160)-(319, 160)
 LINE (0, 160)-(0, 195)
