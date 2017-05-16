@@ -26,6 +26,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 For details, see the file "LICENSE" in the source directory.
 
-The physical objects are released under the Creative Commons BY-SA license.
-
 For details, see: http://creativecommons.org/licenses/by-sa/3.0/
