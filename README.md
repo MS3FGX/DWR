@@ -1,4 +1,4 @@
-Dope Wars: Resurrection
+Dope Wars
 ==
 
 Around 2001 I started work on my first large scale programming project: a fully graphical version of the ever popular ["Dope Wars"](https://en.wikipedia.org/wiki/Drugwars). At the time, everyone was playing this on their Ti calculators, and it seemed like a relatively easy project to take on as it didn't require AI, physics, or any of the other tricky bits of game development.
@@ -10,7 +10,8 @@ QB45 Branch
 
 The code in this branch is very nearly identical to the original version; with only some minor adjustments (removed DRM, updated credits, etc). This is to serve as a reference point for how the game looked/ran when originally released.
 
-To use this version, you'll DOSBox with QBasic installed.
+Binaries are provided for Linux and Windows, and the game appears to be fully playable on both.
+
 
 License
 ==
