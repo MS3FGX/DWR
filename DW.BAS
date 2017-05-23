@@ -4,25 +4,10 @@
 _TITLE "Dope Wars: Resurrection"
 $RESIZE:SMOOTH
 
-' Start variable declarations
-DECLARE SUB DRAWBACKGROUND ()
-DECLARE SUB LEVEL0 ()
-DECLARE SUB MAPLEVEL ()
-DECLARE SUB COMMANDS ()
-DECLARE SUB BANK ()
-DECLARE SUB DEALS ()
-DECLARE SUB PEOPLE ()
-DECLARE SUB BUS ()
-DECLARE SUB DEAL ()
-DECLARE SUB NeatFont (txt$, sx%, sy%, clr%, sty%, size%)
-DIM SHARED txt AS STRING, sx%, sy%, clr%, sty%, size%
-DECLARE SUB ENDING ()
-DECLARE SUB GAMEOVER ()
-
 DopeStart:
 CLS
 CLEAR
-PRINT "Loading..."
+PRINT "Loading core..."
 DIM SHARED A$
 DIM SHARED LEVEL
 LEVEL = 0
@@ -2646,55 +2631,6 @@ DO
 LOOP UNTIL QUIT = 1
 
 DONE0:
-END SUB
-
-SUB MAPLEVEL
-
-
-
-
-
-
-
-
-END SUB
-
-SUB NeatFont (txt$, sx%, sy%, clr%, sty%, size%)
-
-lnh% = LEN(txt$)
-IF sx% = -1 THEN sx% = (640 - ((lnh% * 8) * size%)) / 2
-sx2% = sx%: l% = lnh% * 8
-COLOR 8: LOCATE 1, 1: PRINT txt$
-
-FOR y% = 0 TO 15
-    FOR x% = 0 TO l%
-        IF POINT(x%, y%) <> 0 THEN
-            IF sty% = 1 THEN LINE (sx2% - size%, sy% - size%)-(sx2%, sy%), clr%, BF
-            IF sty% = 2 THEN LINE (sx2% - size%, sy% - size%)-(sx2%, sy%), clr%, B
-            IF sty% = 3 THEN CIRCLE (sx2% - (size% / 2), sy% - (size% / 2)), size% / 2, clr%
-            IF sty% = 4 THEN
-                CIRCLE (sx2% - (size% / 2), sy% - (size% / 2)), size% / 2, clr%
-                PAINT (sx2% - (size% / 2), sy% - (size% / 2)), clr%
-            END IF
-            IF sty% = 5 THEN PSET (sx2% - (size% / 2), sy% - (size% / 2)), clr%
-            IF sty% = 6 OR sty% = 7 THEN
-                LINE (sx2% - (size% / 2), sy% - size%)-(sx2% - size%, sy%), clr%
-                LINE (sx2% - (size% / 2), sy% - size%)-(sx2%, sy%), clr%
-                LINE (sx2% - size%, sy%)-(sx2%, sy%), clr%
-            END IF
-            IF sty% = 7 THEN PAINT (sx2% - (size% / 2), sy% - (size% / 2)), clr%
-            IF sty% = 8 THEN LINE (sx2%, sy% - size%)-(sx2% - size%, sy%), clr%
-
-            IF sty% = 9 THEN LINE (sx2% - size%, sy% - size%)-(sx2%, sy%), clr%
-        END IF
-        sx2% = sx2% + size%
-    NEXT x%
-    sy% = sy% + size%: sx2% = sx%
-NEXT y%
-LOCATE 1, 1: COLOR 0: PRINT txt$
-
-
-
 END SUB
 
 SUB PEOPLE
