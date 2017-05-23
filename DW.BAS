@@ -14,6 +14,7 @@ DECLARE SUB NeatFont (txt$, sx%, sy%, clr%, sty%, size%)
 DIM SHARED txt AS STRING, sx%, sy%, clr%, sty%, size%
 DECLARE SUB ENDING ()
 DECLARE SUB GAMEOVER ()
+
 DopeStart:
 CLS
 CLEAR
@@ -113,29 +114,6 @@ DIM SHARED BHOUSE%(210)
 DIM SHARED GHOUSE%(210)
 DIM SHARED RHOUSE%(210)
 DIM SHARED BANKTILE%(210)
-
-REM: Some variables need to be defined global as they are to be used in SUBs
-DIM SHARED street&
-DIM SHARED buswindows&
-DIM SHARED busnoise&
-
-REM: Load sound files
-theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
-menubeep& = _SNDOPEN("DATA\SFX\BEEP.MP3", "SYNC,VOL")
-ambientcity& = _SNDOPEN("DATA\SFX\CITY.MP3", "SYNC,VOL")
-ambientpark& = _SNDOPEN("DATA\SFX\PARK.MP3", "SYNC,VOL")
-busnoise& = _SNDOPEN("DATA\SFX\BUS.MP3", "VOL")
-
-REM: Load image files
-SCREEN _NEWIMAGE(800, 600, 32)
-buswindows& = _LOADIMAGE("DATA\IMG\BUS.PNG")
-street& = _LOADIMAGE("DATA\IMG\STREET.PNG")
-
-
-REM: Default sound volumes
-_SNDVOL theme&, 0.3
-_SNDVOL ambientcity&, 0.2
-_SNDVOL ambientpark&, 0.2
 
 REM: Load graphic tiles
 SCREEN 13
@@ -265,392 +243,235 @@ FOR y = 1 TO 20
 NEXT y
 CLOSE #2
 GET (1, 1)-(20, 20), BANKTILE%()
-OPEN "DATA\DOPEWARS.DAT" FOR INPUT AS #1
-INPUT #1, LEVEL
-INPUT #1, PlayerX%
-INPUT #1, PlayerY%
-INPUT #1, NAME$
-INPUT #1, MONEY
-INPUT #1, BALANCE
-INPUT #1, DIF
-INPUT #1, POT
-INPUT #1, ECSTACY
-INPUT #1, CRACK
-INPUT #1, ACID
-INPUT #1, COKE
-INPUT #1, HASH
-INPUT #1, HEROIN
-INPUT #1, MUSHROOMS
-INPUT #1, SKNC
-INPUT #1, JC
-INPUT #1, SC
-INPUT #1, PC
-CLOSE #1
 
+CLS
+PRINT "LOADING..."
+
+' Variables used in SUBs need to be defined shared
+DIM SHARED street&
+DIM SHARED buswindows&
+DIM SHARED busnoise&
+DIM SHARED savefile$
+
+' Load config/save files
+configfile$ = "DATA\DW.INI"
+savefile$ = "DATA\DW.SAV"
+
+' Load images for splash and menus
+dwlogo& = _LOADIMAGE("DATA\IMG\LOGO.PNG")
+menubg& = _LOADIMAGE("DATA\IMG\SPLASH.PNG")
+credits& = _LOADIMAGE("DATA\IMG\CREDITS.PNG")
+
+' Load bus animation images
+buswindows& = _LOADIMAGE("DATA\IMG\BUS.PNG")
+street& = _LOADIMAGE("DATA\IMG\STREET.PNG")
+
+' Load menu font
+menufont& = _LOADFONT("DATA\IMG\HW.TTF", 30)
+
+' Load sounds for splash and menus
+theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
+reloadsfx& = _SNDOPEN("DATA\SFX\RELOAD.MP3", "SYNC,VOL")
+menubeep& = _SNDOPEN("DATA\SFX\BEEP.MP3", "SYNC,VOL")
+chingsfx& = _SNDOPEN("DATA\SFX\CHING.MP3", "SYNC, VOL")
+
+' Load ambient sound tracks
+ambientcity& = _SNDOPEN("DATA\SFX\CITY.MP3", "SYNC,VOL")
+ambientpark& = _SNDOPEN("DATA\SFX\PARK.MP3", "SYNC,VOL")
+busnoise& = _SNDOPEN("DATA\SFX\BUS.MP3", "VOL")
+
+' Default sound volumes
+_SNDVOL theme&, 0.3
+_SNDVOL ambientcity&, 0.2
+_SNDVOL ambientpark&, 0.2
+
+' Load saved game ?
+'LOADGAME
+
+' Title screen/menus
 START:
 CLS
-REM: Start playing menu music
+' Start playing menu music
 _SNDPLAY theme&
 
-REM: Create screen and show splash image
+' Create screen
 SCREEN _NEWIMAGE(800, 600, 32)
-splash& = _LOADIMAGE("DATA\SPLASH.PNG")
-_PUTIMAGE (0, 0), splash&
 
-DO
-    A$ = INKEY$
-LOOP WHILE A$ = ""
+' Load font/color
+_FONT menufont&
+COLOR &HFFFCFCFC, &H000000FF
 
-SCREEN 7, 0, 1, 0
-MAIN:
-CLS
-YPOS = 0
-y = 0
-DO
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 10, 15
-    PRINT " Start Game"
-    LOCATE 12, 15
-    PRINT " Options"
-    LOCATE 14, 15
-    PRINT " Quit"
-    LINE (109, YPOS + 69)-(211, YPOS + 69), 6
-    LINE (109, YPOS + 81)-(211, YPOS + 81), 6
-    LINE (109, YPOS + 69)-(109, YPOS + 81), 6
-    LINE (211, YPOS + 69)-(211, YPOS + 81), 6
-    PCOPY 1, 0
-    CLS
-    A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: _SNDPLAY menubeep&
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: _SNDPLAY menubeep&
-    IF y = 3 THEN y = 0
-    IF y = -1 THEN y = 2
-    IF y = 0 THEN YPOS = 0
-    IF y = 1 THEN YPOS = 16
-    IF y = 2 THEN YPOS = 32
-LOOP UNTIL A$ = CHR$(32): _SNDPLAY menubeep&
-IF y = 0 THEN GOTO STARTGAME
-IF y = 1 THEN GOTO OPTIONS
-IF y = 2 THEN CLS
-END
-OPTIONS:
-CLS
-YPOS = 0
-y = 0
-DO
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 10, 15
-    PRINT " Difficulty"
-    LOCATE 12, 15
-    PRINT " View Save"
-    LOCATE 14, 15
-    PRINT " Credits"
-    LOCATE 16, 15
-    PRINT " Passcodes"
-    LOCATE 18, 15
-    PRINT " Cancel"
-    LINE (109, YPOS + 69)-(211, YPOS + 69), 6
-    LINE (109, YPOS + 81)-(211, YPOS + 81), 6
-    LINE (109, YPOS + 69)-(109, YPOS + 81), 6
-    LINE (211, YPOS + 69)-(211, YPOS + 81), 6
-    PCOPY 1, 0
-    CLS
-    A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: _SNDPLAY menubeep&
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: _SNDPLAY menubeep&
-    IF y = 5 THEN y = 0
-    IF y = -1 THEN y = 4
-    IF y = 0 THEN YPOS = 0
-    IF y = 1 THEN YPOS = 16
-    IF y = 2 THEN YPOS = 32
-    IF y = 3 THEN YPOS = 48
-    IF y = 4 THEN YPOS = 64
-LOOP UNTIL A$ = CHR$(32): _SNDPLAY menubeep&
-IF y = 0 THEN GOTO DIFF
-IF y = 1 THEN GOTO VIEWSAVE
-IF y = 2 THEN GOTO CREDITS
-IF y = 3 THEN GOTO CODES
-IF y = 4 THEN GOTO MAIN
-DIFF:
-CLS
-YPOS = 0
-y = 0
-DO
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 6, 13
-    PRINT "Game Difficulty"
-    LOCATE 10, 15
-    PRINT " Easy"
-    LOCATE 12, 15
-    PRINT " Medium"
-    LOCATE 14, 15
-    PRINT " Hard"
-    LINE (109, YPOS + 69)-(211, YPOS + 69), 6
-    LINE (109, YPOS + 81)-(211, YPOS + 81), 6
-    LINE (109, YPOS + 69)-(109, YPOS + 81), 6
-    LINE (211, YPOS + 69)-(211, YPOS + 81), 6
-    PCOPY 1, 0
-    CLS
-    A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: _SNDPLAY menubeep&
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: _SNDPLAY menubeep&
-    IF y = 3 THEN y = 0
-    IF y = -1 THEN y = 2
-    IF y = 0 THEN YPOS = 0
-    IF y = 1 THEN YPOS = 16
-    IF y = 2 THEN YPOS = 32
-LOOP UNTIL A$ = CHR$(32): _SNDPLAY menubeep&
-IF y = 0 THEN DIF = 1
-IF y = 1 THEN DIF = 2
-IF y = 2 THEN DIF = 3
-GOTO OPTIONS
-VIEWSAVE:
-CLS
+' Show splash screen
+_PUTIMAGE (0, 0), menubg&
+_PUTIMAGE (0, 0), dwlogo&
 
-REM: Check to see if there is a save
-IF NAME$ = "" THEN
-    SCREEN 13
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 12, 12
-    PRINT "No saved game found"
-    DO
-        A$ = INKEY$
-    LOOP WHILE A$ = ""
-    SCREEN 7, 0, 1, 0
+' Wait for user input
+SLEEP
+
+' Clear input buffer so it doesn't mess with menus
+DO: KEY$ = INKEY$: LOOP UNTIL KEY$ = ""
+
+' Play sound and animate logo
+_SNDPLAY reloadsfx&
+DO
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, -FRAME), dwlogo&
+    _DELAY .000001
+
+    ' Update display and increment counter
+    _DISPLAY
+    FRAME = FRAME + 4
+LOOP UNTIL FRAME = 200
+
+' Main menu loop
+MAINMENU:
+CLS
+SELECTION = 0
+DO
+    ' Draw BG
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, -200), dwlogo&
+
+    ' Write text, depending on SELECTION variable
+    DRAW_MAIN_MENU (SELECTION)
+
+    ' Update display
+    _DISPLAY
+
+    ' Handle input
+    KEY$ = INKEY$
+    IF KEY$ = CHR$(0) + CHR$(72) THEN SELECTION = SELECTION - 1: _SNDPLAY menubeep& ' Up arrow
+    IF KEY$ = CHR$(0) + CHR$(80) THEN SELECTION = SELECTION + 1: _SNDPLAY menubeep& ' Down arrow
+
+    ' Handle over/under conditions
+    IF SELECTION = 3 THEN SELECTION = 0
+    IF SELECTION = -1 THEN SELECTION = 2
+
+LOOP UNTIL KEY$ = CHR$(13): _SNDPLAY menubeep&
+
+' Handle selection
+IF SELECTION = 0 THEN GOTO STARTGAME
+IF SELECTION = 1 THEN GOTO OPTIONS
+IF SELECTION = 2 THEN
+    SYSTEM
 END IF
-IF NAME$ = "" THEN GOTO OPTIONS
 
-LINE (0, 0)-(320, 10), 7, BF
-LINE (0, 0)-(10, 200), 7, BF
-LINE (310, 0)-(320, 200), 7, BF
-LINE (0, 190)-(320, 200), 7, BF
-LOCATE 4, 3
-PRINT "Name:"; NAME$
-LOCATE 6, 3
-PRINT "Money:"; INT(MONEY)
-LOCATE 8, 3
-PRINT "Balance:"; INT(BALANCE)
-LOCATE 12, 3
-PRINT "Stash:"
-LOCATE 14, 3
-PRINT TAB(5); "Pot:"; POT; TAB(20); "Ecstasy:"; ECSTACY
-LOCATE 16, 3
-PRINT TAB(5); "Crack:"; CRACK; TAB(20); "Acid:"; ACID
-LOCATE 18, 3
-PRINT TAB(5); "Coke:"; COKE; TAB(20); "Hash:"; HASH
-LOCATE 20, 3
-PRINT TAB(5); "Heroin:"; HEROIN; TAB(20); "Shrooms:"; MUSHROOMS
-PCOPY 1, 0
-CLS
-DO
-    A$ = INKEY$
-LOOP WHILE A$ = ""
-GOTO OPTIONS
-CREDITS:
-CLS
-LINE (0, 0)-(320, 10), 7, BF
-LINE (0, 0)-(10, 200), 7, BF
-LINE (310, 0)-(320, 200), 7, BF
-LINE (0, 190)-(320, 200), 7, BF
-LOCATE 4, 3
-PRINT "Programer: Tom Nardi"
-LOCATE 6, 3
-PRINT "Art/Level Design: Max Nardi"
-LOCATE 8, 3
-PRINT "Consultants: David Strapp"
-LOCATE 9, 3
-PRINT "             Dean Steckel"
-LOCATE 11, 3
-PRINT "Testers: Omar Vazquez (RIP)"
-LOCATE 12, 3
-PRINT "         John Rindt"
-LOCATE 13, 3
-PRINT "         Edwin Davila"
-LOCATE 14, 3
-PRINT "         Nick Rodkin"
-LOCATE 16, 3
-PRINT "Music: Tom Cascino"
-LOCATE 17, 3
-PRINT "                "
-LOCATE 18, 3
-PRINT "                "
-LOCATE 20, 3
-PRINT "Special Thanks: DOSBox, QB64"
-PCOPY 1, 0
-CLS
-DO
-    A$ = INKEY$
-LOOP WHILE A$ = ""
-GOTO OPTIONS
-CODES:
-CLS
-SCREEN 13
-LINE (0, 0)-(320, 10), 7, BF
-LINE (0, 0)-(10, 200), 7, BF
-LINE (310, 0)-(320, 200), 7, BF
-LINE (0, 190)-(320, 200), 7, BF
-LOCATE 10, 14
-PRINT "Enter Passcode"
-LOCATE 14, 14
-INPUT "", CODE$
-IF CODE$ = "I'm a Pussy" THEN
-    NAME$ = "Pussy"
-    MONEY = 100000
-ELSEIF CODE$ = "I need to win" THEN
-    MONEY = 1500000
-    CRACK = 1000000
-ELSEIF CODE$ = "Tumbleweed" THEN
-    POT = 10000
-ELSEIF CODE$ = "Queer" THEN
-    NAME$ = "Mr. Queer"
-    SKNC = 12
-    JC = 13
-    SC = 13
-    PC = 13
-ELSEIF CODE$ = "XBox" THEN
-    LEVEL = 2
-    PlayerX% = 6
-    PlayerY% = 5
-    MONEY = 1
-    BALANCE = 1000000
-    POT = 0
-    ECSTACY = 0
-    CRACK = 0
-    ACID = 0
-    COKE = 0
-    HASH = 0
-    HEROIN = 0
-    MUSHROOMS = 0
-ELSEIF CODE$ = "GameCube" THEN
-    POT = 1000
-    ECSTACY = 1000
-    CRACK = 1000
-    ACID = 1000
-    COKE = 1000
-    HASH = 1000
-    HEROIN = 1000
-    MUSHROOMS = 1000
-ELSEIF CODE$ = "PS2" THEN
-    MONEY = 2000000
-ELSEIF CODE$ = "Junkie Motherfuckers" THEN
-    JMF = 1
-ELSEIF CODE$ = "FMV SUX" THEN
-    FMV = 0
-ELSEIF CODE$ = "Roll of Quarters" THEN
-    ROC = 1
-ELSEIF CODE$ = "Ninja Turtles" THEN
-    SKNC = 2
-    SC = 14
-    JC = 2
-    PC = 2
-ELSEIF CODE$ = "Swiss Bank" THEN
-    INTRATE = .27
-ELSE
-    CODEERROR = 1
-END IF
-IF CODEERROR = 0 THEN
-    CLS
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 10, 16
-    PRINT "Code:"
-    LOCATE 12, 15
-    PRINT CODE$
-    LOCATE 14, 16
-    PRINT "Accepted"
-    DO
-        A$ = INKEY$
-    LOOP WHILE A$ = ""
-    OPEN "DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
-    WRITE #1, LEVEL
-    WRITE #1, PlayerX%
-    WRITE #1, PlayerY%
-    WRITE #1, NAME$
-    WRITE #1, MONEY
-    WRITE #1, BALANCE
-    WRITE #1, DIF
-    WRITE #1, POT
-    WRITE #1, ECSTACY
-    WRITE #1, CRACK
-    WRITE #1, ACID
-    WRITE #1, COKE
-    WRITE #1, HASH
-    WRITE #1, HEROIN
-    WRITE #1, MUSHROOMS
-    WRITE #1, SKNC
-    WRITE #1, JC
-    WRITE #1, SC
-    WRITE #1, PC
-    CLOSE #1
-ELSE
-    CLS
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 10, 16
-    PRINT "Code:"
-    LOCATE 12, 15
-    PRINT CODE$
-    LOCATE 14, 16
-    PRINT "Invalid"
-    DO
-        A$ = INKEY$
-    LOOP WHILE A$ = ""
-    CODEERROR = 0
-END IF
-CLS
-SCREEN 7, 0, 1, 0
-GOTO OPTIONS
+' Start game menu loop
 STARTGAME:
 CLS
-YPOS = 0
-y = 0
+SELECTION = 0
 DO
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 10, 15
-    PRINT " New Game"
-    LOCATE 12, 15
-    PRINT " Load Game"
-    LOCATE 14, 15
-    PRINT " Cancel"
-    LINE (109, YPOS + 69)-(211, YPOS + 69), 6
-    LINE (109, YPOS + 81)-(211, YPOS + 81), 6
-    LINE (109, YPOS + 69)-(109, YPOS + 81), 6
-    LINE (211, YPOS + 69)-(211, YPOS + 81), 6
-    PCOPY 1, 0
-    CLS
-    A$ = INKEY$
-    IF A$ = CHR$(0) + CHR$(72) THEN y = y - 1: _SNDPLAY menubeep&
-    IF A$ = CHR$(0) + CHR$(80) THEN y = y + 1: _SNDPLAY menubeep&
-    IF y = 3 THEN y = 0
-    IF y = -1 THEN y = 2
-    IF y = 0 THEN YPOS = 0
-    IF y = 1 THEN YPOS = 16
-    IF y = 2 THEN YPOS = 32
-LOOP UNTIL A$ = CHR$(32): _SNDPLAY menubeep&
-IF y = 0 THEN GOTO NEWGAME
-IF y = 1 THEN GOTO LOADGAME
-IF y = 2 THEN GOTO MAIN
+    ' Draw BG
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, -200), dwlogo&
 
-NEWGAME:
+    ' Write Start Game text
+    DRAW_MAIN_MENU (0)
+
+    ' Selections
+    IF SELECTION = 0 THEN
+        LOCATE 12, 260
+        COLOR &HFFFFF933
+        PRINT "New Game"
+        LOCATE 14, 250
+        COLOR &HFFFCFCFC
+        PRINT "Load Game"
+        LOCATE 16, 250
+        PRINT "Back"
+    ELSEIF SELECTION = 1 THEN
+        LOCATE 12, 250
+        COLOR &HFFFCFCFC
+        PRINT "New Game"
+        LOCATE 14, 260
+        COLOR &HFFFFF933
+        PRINT "Load Game"
+        LOCATE 16, 250
+        COLOR &HFFFCFCFC
+        PRINT "Back"
+    ELSEIF SELECTION = 2 THEN
+        LOCATE 12, 250
+        COLOR &HFFFCFCFC
+        PRINT "New Game"
+        LOCATE 14, 250
+        COLOR &HFFFCFCFC
+        PRINT "Load Game"
+        LOCATE 16, 260
+        COLOR &HFFFFF933
+        PRINT "Back"
+    END IF
+
+    ' Update display
+    _DISPLAY
+
+    ' Handle input
+    KEY$ = INKEY$
+    IF KEY$ = CHR$(0) + CHR$(72) THEN SELECTION = SELECTION - 1: _SNDPLAY menubeep& ' Up arrow
+    IF KEY$ = CHR$(0) + CHR$(80) THEN SELECTION = SELECTION + 1: _SNDPLAY menubeep& ' Down arrow
+
+    ' Handle over/under conditions
+    IF SELECTION = 3 THEN SELECTION = 0
+    IF SELECTION = -1 THEN SELECTION = 2
+
+LOOP UNTIL KEY$ = CHR$(13): _SNDPLAY menubeep&
+
+' Handle selection
+IF SELECTION = 0 THEN GOTO PLAYERNAME
+IF SELECTION = 2 THEN GOTO MAINMENU
+IF SELECTION = 1 THEN
+    LOADGAME
+    GOTO DWSTART
+END IF
+
+' Play name entry
+PLAYERNAME:
+CLS
+
+DO
+    ' Draw BG
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, -200), dwlogo&
+
+    ' Write Start Game text
+    DRAW_MAIN_MENU (0)
+
+    ' Highlight new game
+    LOCATE 12, 260
+    COLOR &HFFFFF933
+    PRINT "New Game"
+    LOCATE 14, 250
+    COLOR &HFFFCFCFC
+    PRINT "Load Game"
+    LOCATE 16, 250
+    PRINT "Back"
+
+    ' Prompt
+    LOCATE 12, 480
+    COLOR &HFFFCFCFC
+    PRINT "Enter Name:"
+
+    ' Get string
+    LOCATE 14, 480, 1
+    COLOR &HFFFCFCFC
+    INPUT "", NAME$
+
+    ' Update display
+    _DISPLAY
+
+    IF LEN(NAME$) >= 11 THEN
+        LOCATE 14, 480
+        PRINT "                                    "
+        LOCATE 16, 480
+        COLOR &HFFF70031
+        PRINT "That name is too long!"
+
+        ' Wait for user
+        _DISPLAY
+        SLEEP
+    END IF
+LOOP UNTIL LEN(NAME$) <= 10 AND LEN(NAME$) > 0
+
+' Load default values before launching game
+' DEFAULT GAME VALUES
 LEVEL = 0
 PlayerX% = 7
 PlayerY% = 6
@@ -667,71 +488,323 @@ COKE = 0
 HASH = 0
 HEROIN = 0
 MUSHROOMS = 0
-SKNC = 12
-JC = 6
-SC = 15
-PC = 1
-DO
-    CLS
-    SCREEN 13
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 3, 3
-    INPUT "Enter name: ", NAME$
-    IF LEN(NAME$) >= 11 THEN
-        LOCATE 3, 3
-        PRINT "                                    "
-        LOCATE 3, 3
-        PRINT "That name is too long."
-        DO
-            A$ = INKEY$
-        LOOP WHILE A$ = ""
-    END IF
-LOOP UNTIL LEN(NAME$) <= 10 AND LEN(NAME$) > 0
+
+' Jump to game start
 GOTO DWSTART
 
-LOADGAME:
-OPEN "DATA\DOPEWARS.DAT" FOR INPUT AS #1
-INPUT #1, LEVEL
-INPUT #1, PlayerX%
-INPUT #1, PlayerY%
-INPUT #1, NAME$
-INPUT #1, MONEY
-INPUT #1, BALANCE
-INPUT #1, DIF
-INPUT #1, POT
-INPUT #1, ECSTACY
-INPUT #1, CRACK
-INPUT #1, ACID
-INPUT #1, COKE
-INPUT #1, HASH
-INPUT #1, HEROIN
-INPUT #1, MUSHROOMS
-INPUT #1, SKNC
-INPUT #1, JC
-INPUT #1, SC
-INPUT #1, PC
-CLOSE #1
-IF NAME$ = "" THEN
-    CLS
-    SCREEN 13
-    LINE (0, 0)-(320, 10), 7, BF
-    LINE (0, 0)-(10, 200), 7, BF
-    LINE (310, 0)-(320, 200), 7, BF
-    LINE (0, 190)-(320, 200), 7, BF
-    LOCATE 12, 12
-    PRINT "No saved game found"
-    DO
-        A$ = INKEY$
-    LOOP WHILE A$ = ""
-    SCREEN 7, 0, 1, 0
-END IF
-IF NAME$ = "" THEN GOTO STARTGAME
-DWSTART:
+' Options menu loop
+OPTIONS:
 CLS
+SELECTION = 0
+DO
+    ' Draw BG
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, -200), dwlogo&
+
+    ' Highlight options
+    DRAW_MAIN_MENU (1)
+
+    ' Selections
+    DRAW_OPTIONS_MENU (SELECTION)
+
+    ' Update display
+    _DISPLAY
+
+    ' Handle input
+    KEY$ = INKEY$
+    IF KEY$ = CHR$(0) + CHR$(72) THEN SELECTION = SELECTION - 1: _SNDPLAY menubeep& ' Up arrow
+    IF KEY$ = CHR$(0) + CHR$(80) THEN SELECTION = SELECTION + 1: _SNDPLAY menubeep& ' Down arrow
+
+    ' Handle over/under conditions
+    IF SELECTION = 5 THEN SELECTION = 0
+    IF SELECTION = -1 THEN SELECTION = 4
+
+LOOP UNTIL KEY$ = CHR$(13): _SNDPLAY menubeep&
+
+' Handle selection
+IF SELECTION = 0 THEN GOTO DIFFSELECT
+IF SELECTION = 1 THEN GOTO ENTERCHEATS
+IF SELECTION = 3 THEN GOTO DISPLAYOPTIONS
+IF SELECTION = 2 THEN GOTO SWIPECREDITS
+IF SELECTION = 4 THEN GOTO MAINMENU
+
+'Difficult select menu loop
+DIFFSELECT:
+CLS
+SELECTION = 0
+DO
+    ' Draw BG
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, -200), dwlogo&
+
+    ' Highlight options
+    DRAW_MAIN_MENU (1)
+
+    ' Highlight difficulty
+    DRAW_OPTIONS_MENU (0)
+
+    ' Selections
+    IF SELECTION = 0 THEN
+        LOCATE 12, 490
+        COLOR &HFFFFF933
+        PRINT "Easy"
+        LOCATE 14, 480
+        COLOR &HFFFCFCFC
+        PRINT "Medium"
+        LOCATE 16, 480
+        PRINT "Hard"
+    ELSEIF SELECTION = 1 THEN
+        LOCATE 12, 480
+        COLOR &HFFFCFCFC
+        PRINT "Easy"
+        LOCATE 14, 490
+        COLOR &HFFFFF933
+        PRINT "Medium"
+        LOCATE 16, 480
+        COLOR &HFFFCFCFC
+        PRINT "Hard"
+    ELSEIF SELECTION = 2 THEN
+        LOCATE 12, 480
+        COLOR &HFFFCFCFC
+        PRINT "Easy"
+        LOCATE 14, 480
+        COLOR &HFFFCFCFC
+        PRINT "Medium"
+        LOCATE 16, 490
+        COLOR &HFFFFF933
+        PRINT "Hard"
+    END IF
+
+    ' Update display
+    _DISPLAY
+
+    ' Handle input
+    KEY$ = INKEY$
+    IF KEY$ = CHR$(0) + CHR$(72) THEN SELECTION = SELECTION - 1: _SNDPLAY menubeep& ' Up arrow
+    IF KEY$ = CHR$(0) + CHR$(80) THEN SELECTION = SELECTION + 1: _SNDPLAY menubeep& ' Down arrow
+
+    ' Handle over/under conditions
+    IF SELECTION = 3 THEN SELECTION = 0
+    IF SELECTION = -1 THEN SELECTION = 2
+
+LOOP UNTIL KEY$ = CHR$(13): _SNDPLAY menubeep&
+
+' Handle selection
+IF SELECTION = 0 THEN DIFF = 1
+IF SELECTION = 1 THEN DIFF = 2
+IF SELECTION = 2 THEN DIFF = 3
+
+' Jump back to options
+GOTO OPTIONS
+
+' Cheats menu loop
+ENTERCHEATS:
+CLS
+
+' Draw BG
+_PUTIMAGE (0, 0), menubg&
+_PUTIMAGE (0, -200), dwlogo&
+
+' Highlight options
+DRAW_MAIN_MENU (1)
+
+' Highlight cheats
+DRAW_OPTIONS_MENU (1)
+
+' Prompt
+LOCATE 12, 480
+COLOR &HFFFCFCFC
+PRINT "Enter Cheat:"
+
+' Get string
+LOCATE 14, 480, 1
+COLOR &HFFFCFCFC
+INPUT "", CODE$
+
+' Update display
+_DISPLAY
+
+' Check if it's a known code
+CODEERROR = 0
+' Convert to upper case
+CODE$ = UCASE$(CODE$)
+
+' CODELIST
+IF CODE$ = "I NEED TO WIN" THEN
+    MONEY = 1500000
+    CRACK = 1000000
+ELSEIF CODE$ = "TUMBLEWEED" THEN
+    POT = 10000
+ELSEIF CODE$ = "XBOX" THEN
+    LEVEL = 2
+    PlayerX% = 6
+    PlayerY% = 5
+    MONEY = 1
+    BALANCE = 1000000
+    POT = 0
+    ECSTACY = 0
+    CRACK = 0
+    ACID = 0
+    COKE = 0
+    HASH = 0
+    HEROIN = 0
+    MUSHROOMS = 0
+ELSEIF CODE$ = "GAMECUBE" THEN
+    POT = 1000
+    ECSTACY = 1000
+    CRACK = 1000
+    ACID = 1000
+    COKE = 1000
+    HASH = 1000
+    HEROIN = 1000
+    MUSHROOMS = 1000
+ELSEIF CODE$ = "PS2" THEN
+    MONEY = 2000000
+ELSEIF CODE$ = "JUNKIES" THEN
+    JMF = 1
+ELSEIF CODE$ = "FMV SUX" THEN
+    FMV = 0
+ELSEIF CODE$ = "EASYPASS" THEN
+    ROC = 1
+ELSEIF CODE$ = "SWISS BANK" THEN
+    INTRATE = .27
+ELSE
+    CODEERROR = 1
+END IF
+
+' Print status
+LOCATE 16, 480
+COLOR &HFFFFF933
+IF CODEERROR = 0 THEN
+    PRINT "Cheat Activated"
+    _SNDPLAY chingsfx&
+ELSE
+    PRINT "Invalid Cheat"
+END IF
+
+' Wait for input
+_DISPLAY
+SLEEP
+
+' Clear input buffer so it doesn't mess with menus
+DO: KEY$ = INKEY$: LOOP UNTIL KEY$ = ""
+
+' Jump back to options
+GOTO OPTIONS
+
+' Credits animation
+SWIPECREDITS:
+CLS
+FRAME = 0
+DO
+    ' Draw BG
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, -200), dwlogo&
+
+    ' Highlight options
+    DRAW_MAIN_MENU (1)
+
+    ' Highlight credits
+    DRAW_OPTIONS_MENU (2)
+
+    ' Slide in credits image
+    _PUTIMAGE ((800 - FRAME), 0), credits&
+
+    ' Update display and increment counter
+    _DISPLAY
+    FRAME = FRAME + 50
+
+LOOP UNTIL FRAME = 850
+
+SLEEP 1
+
+' Animate vertically
+FRAME = 0
+DO
+    ' Slide up credits image
+    _PUTIMAGE (0, -FRAME), credits&
+    _DELAY .03
+
+    ' Update display and increment counter
+    _DISPLAY
+    FRAME = FRAME + 1
+
+LOOP UNTIL FRAME = 600
+
+' Clear input buffer so it doesn't mess with menus
+DO: KEY$ = INKEY$: LOOP UNTIL KEY$ = ""
+
+SLEEP 1
+
+' Jump back to options
+GOTO OPTIONS:
+
+' Display menu loop
+DISPLAYOPTIONS:
+CLS
+SELECTION = 0
+DO
+    ' Draw BG
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, -200), dwlogo&
+
+    ' Highlight options
+    DRAW_MAIN_MENU (1)
+
+    ' Highlight display
+    DRAW_OPTIONS_MENU (3)
+
+    LOCATE 16, 470
+    COLOR &HFFF70031
+    PRINT "Restart required!"
+
+    ' Selections
+    IF SELECTION = 0 THEN
+        LOCATE 12, 490
+        COLOR &HFFFFF933
+        PRINT "Windowed"
+        LOCATE 14, 480
+        COLOR &HFFFCFCFC
+        PRINT "Full Screen"
+    ELSEIF SELECTION = 1 THEN
+        LOCATE 12, 480
+        COLOR &HFFFCFCFC
+        PRINT "Windowed"
+        LOCATE 14, 490
+        COLOR &HFFFFF933
+        PRINT "Full Screen"
+    END IF
+
+    ' Update display
+    _DISPLAY
+
+    ' Handle input
+    KEY$ = INKEY$
+    IF KEY$ = CHR$(0) + CHR$(72) THEN SELECTION = SELECTION - 1: _SNDPLAY menubeep& ' Up arrow
+    IF KEY$ = CHR$(0) + CHR$(80) THEN SELECTION = SELECTION + 1: _SNDPLAY menubeep& ' Down arrow
+
+    ' Handle over/under conditions
+    IF SELECTION = 2 THEN SELECTION = 0
+    IF SELECTION = -1 THEN SELECTION = 1
+
+LOOP UNTIL KEY$ = CHR$(13): _SNDPLAY menubeep&
+
+' Open INI file and write option
+OPEN configfile$ FOR OUTPUT AS #2
+WRITE #2, SELECTION
+CLOSE #2
+
+' Jump back to options
+GOTO OPTIONS
+
+' Main game start
+DWSTART:
+' Stop menu music if it's still going
 _SNDSTOP theme&
+
+' Get SCREEN back into a usable state for main game
+CLS
+_AUTODISPLAY
 SCREEN 13
 DO
     REM: Play ambient loop depending on map
@@ -2894,4 +2967,144 @@ IF DPROX = 1 THEN GOTO FIN
 FIN:
 
 END SUB
+
+' New functions start here
+
+' Function to load a saved game
+SUB LOADGAME
+IF _FILEEXISTS(savefile$) THEN
+    OPEN savefile$ FOR INPUT AS #1
+    INPUT #1, LEVEL
+    INPUT #1, PlayerX%
+    INPUT #1, PlayerY%
+    INPUT #1, NAME$
+    INPUT #1, MONEY
+    INPUT #1, BALANCE
+    INPUT #1, DIF
+    INPUT #1, POT
+    INPUT #1, ECSTACY
+    INPUT #1, CRACK
+    INPUT #1, ACID
+    INPUT #1, COKE
+    INPUT #1, HASH
+    INPUT #1, HEROIN
+    INPUT #1, MUSHROOMS
+    INPUT #1, SKNC
+    INPUT #1, JC
+    INPUT #1, SC
+    INPUT #1, PC
+    CLOSE #1
+END IF
+END SUB
+
+' Draw text for main menu
+SUB DRAW_MAIN_MENU (SELECTION)
+IF SELECTION = 0 THEN
+    ' Start
+    LOCATE 12, 30
+    COLOR &HFFFFF933
+    PRINT "Start Game"
+    LOCATE 14, 20
+    COLOR &HFFFCFCFC
+    PRINT "Options"
+    LOCATE 16, 20
+    PRINT "Quit"
+ELSEIF SELECTION = 1 THEN
+    ' Options
+    LOCATE 12, 20
+    COLOR &HFFFCFCFC
+    PRINT "Start Game"
+    LOCATE 14, 30
+    COLOR &HFFFFF933
+    PRINT "Options"
+    LOCATE 16, 20
+    COLOR &HFFFCFCFC
+    PRINT "Quit"
+ELSEIF SELECTION = 2 THEN
+    ' Quit
+    LOCATE 12, 20
+    COLOR &HFFFCFCFC
+    PRINT "Start Game"
+    LOCATE 14, 20
+    PRINT "Options"
+    LOCATE 16, 30
+    COLOR &HFFFFF933
+    PRINT "Quit"
+END IF
+END SUB
+
+SUB DRAW_OPTIONS_MENU (SELECTION)
+IF SELECTION = 0 THEN
+    LOCATE 10, 260
+    COLOR &HFFFFF933
+    PRINT "Difficulty"
+    LOCATE 12, 250
+    COLOR &HFFFCFCFC
+    PRINT "Cheats"
+    LOCATE 14, 250
+    PRINT "Credits"
+    LOCATE 16, 250
+    PRINT "Display"
+    LOCATE 18, 250
+    PRINT "Back"
+ELSEIF SELECTION = 1 THEN
+    LOCATE 10, 250
+    COLOR &HFFFCFCFC
+    PRINT "Difficulty"
+    LOCATE 12, 260
+    COLOR &HFFFFF933
+    PRINT "Cheats"
+    LOCATE 14, 250
+    COLOR &HFFFCFCFC
+    PRINT "Credits"
+    LOCATE 16, 250
+    PRINT "Display"
+    LOCATE 18, 250
+    PRINT "Back"
+ELSEIF SELECTION = 2 THEN
+    LOCATE 10, 250
+    COLOR &HFFFCFCFC
+    PRINT "Difficulty"
+    LOCATE 12, 250
+    PRINT "Cheats"
+    LOCATE 14, 260
+    COLOR &HFFFFF933
+    PRINT "Credits"
+    LOCATE 16, 250
+    COLOR &HFFFCFCFC
+    PRINT "Display"
+    LOCATE 18, 250
+    PRINT "Back"
+ELSEIF SELECTION = 3 THEN
+    LOCATE 10, 250
+    COLOR &HFFFCFCFC
+    PRINT "Difficulty"
+    LOCATE 12, 250
+    PRINT "Cheats"
+    LOCATE 14, 250
+    PRINT "Credits"
+    LOCATE 16, 260
+    COLOR &HFFFFF933
+    PRINT "Display"
+    LOCATE 18, 250
+    COLOR &HFFFCFCFC
+    PRINT "Back"
+ELSEIF SELECTION = 4 THEN
+    LOCATE 10, 250
+    COLOR &HFFFCFCFC
+    PRINT "Difficulty"
+    LOCATE 12, 250
+    PRINT "Cheats"
+    LOCATE 14, 250
+    PRINT "Credits"
+    LOCATE 16, 250
+    PRINT "Display"
+    LOCATE 18, 260
+    COLOR &HFFFFF933
+    PRINT "Back"
+END IF
+END SUB
+
+
+
 
