@@ -287,6 +287,7 @@ theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
 reloadsfx& = _SNDOPEN("DATA\SFX\RELOAD.MP3", "SYNC,VOL")
 menubeep& = _SNDOPEN("DATA\SFX\BEEP.MP3", "SYNC,VOL")
 chingsfx& = _SNDOPEN("DATA\SFX\CHING.MP3", "SYNC, VOL")
+errorsfx& = _SNDOPEN("DATA\SFX\BUZZER.MP3", "SYNC, VOL")
 
 ' Load ambient sound tracks
 ambientcity& = _SNDOPEN("DATA\SFX\CITY.MP3", "SYNC,VOL")
@@ -466,6 +467,7 @@ ELSE
     LOCATE 14, 480
     COLOR &HFFF70031
     PRINT "No saved game found!"
+    _SNDPLAY errorsfx&
 
     ' Update screen
     _DISPLAY
@@ -717,17 +719,18 @@ ELSE
     CODEERROR = 1
 END IF
 
-' Print status
+' Print message and play sound
 LOCATE 16, 480
-COLOR &HFFFFF933
 IF CODEERROR = 0 THEN
-    ' Save game to apply the new vars
-    SAVEGAME
-    ' Print message and play sound
+    COLOR &HFFFFF933
     PRINT "Cheat Activated"
     _SNDPLAY chingsfx&
+    ' Save game to apply the new vars
+    SAVEGAME
 ELSE
+    COLOR &HFFF70031
     PRINT "Invalid Cheat"
+    _SNDPLAY errorsfx&
 END IF
 
 ' Wait for input
