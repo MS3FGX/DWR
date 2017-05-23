@@ -251,6 +251,8 @@ PRINT "LOADING..."
 DIM SHARED street&
 DIM SHARED buswindows&
 DIM SHARED busnoise&
+DIM SHARED ambientcity&
+DIM SHARED ambientpark&
 DIM SHARED savefile$
 
 ' Load config/save files
@@ -278,7 +280,7 @@ chingsfx& = _SNDOPEN("DATA\SFX\CHING.MP3", "SYNC, VOL")
 ' Load ambient sound tracks
 ambientcity& = _SNDOPEN("DATA\SFX\CITY.MP3", "SYNC,VOL")
 ambientpark& = _SNDOPEN("DATA\SFX\PARK.MP3", "SYNC,VOL")
-busnoise& = _SNDOPEN("DATA\SFX\BUS.MP3", "VOL")
+busnoise& = _SNDOPEN("DATA\SFX\BUS.MP3", "SYNC, VOL")
 
 ' Default sound volumes
 _SNDVOL theme&, 0.3
@@ -800,12 +802,11 @@ CLS
 _AUTODISPLAY
 SCREEN 13
 DO
-    REM: Play ambient loop depending on map
+    ' Stop any current ambient track, and start appropriate one
+    STOPAMBIENT
     IF LEVEL = 2 THEN
-        _SNDSTOP ambientcity&
         _SNDLOOP ambientpark&
     ELSE
-        _SNDSTOP ambientpark&
         _SNDLOOP ambientcity&
     END IF
 
@@ -896,6 +897,7 @@ IF GOVER = 1 THEN
 END IF
 ' Attempt to restart game
 IF R = 1 THEN
+    STOPAMBIENT
     GOTO DopeStart
 END IF
 
@@ -1326,8 +1328,7 @@ IF FMV = 1 THEN
     MOVELENGTH = 50
 
     REM: Start playing audio out of animation loop, stop ambient tracks first
-    _SNDSTOP ambientpark&
-    _SNDSTOP ambientcity&
+    STOPAMBIENT
     _SNDPLAY busnoise&
     DO
         _PUTIMAGE ((-1700 + (FRAME * MOVEOFFSET)), 0), street&
@@ -2910,6 +2911,12 @@ FIN:
 END SUB
 
 ' New functions start here
+
+' Stop background audio tracks
+SUB STOPAMBIENT
+_SNDSTOP ambientpark&
+_SNDSTOP ambientcity&
+END SUB
 
 ' Return game variables to default
 SUB LOADDEFAULTS
