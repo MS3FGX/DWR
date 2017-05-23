@@ -301,6 +301,17 @@ _SNDVOL ambientpark&, 0.2
 ' Load saved game now so cheats can be applied
 LOADGAME
 
+' Check .ini file to see if we should go to full screen
+IF _FILEEXISTS(configfile$) THEN
+
+    OPEN configfile$ FOR INPUT AS #2
+    INPUT #2, DISPLAYSTATUS
+    CLOSE #2
+
+    ' Default is windowed
+    IF DISPLAYSTATUS = 1 THEN _FULLSCREEN
+END IF
+
 ' Title screen/menus
 START:
 CLS
