@@ -418,10 +418,47 @@ LOOP UNTIL KEY$ = CHR$(13): _SNDPLAY menubeep&
 
 ' Handle selection
 IF SELECTION = 0 THEN GOTO PLAYERNAME
+IF SELECTION = 1 THEN GOTO LOADSAVED
 IF SELECTION = 2 THEN GOTO MAINMENU
-IF SELECTION = 1 THEN
+
+' Attempt to load saved game
+LOADSAVED:
+CLS
+
+IF NAME$ <> "" THEN
     LOADGAME
     GOTO DWSTART
+ELSE
+    ' Draw BG
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, -200), dwlogo&
+
+    ' Write Start Game text
+    DRAW_MAIN_MENU (0)
+
+    ' Highlight new game
+    LOCATE 12, 260
+    COLOR &HFFFCFCFC
+    PRINT "New Game"
+    LOCATE 14, 250
+    COLOR &HFFFFF933
+    PRINT "Load Game"
+    LOCATE 16, 250
+    PRINT "Back"
+
+    ' Prompt
+    LOCATE 12, 480
+    COLOR &HFFF70031
+    PRINT "No saved game found!"
+
+    ' Update screen
+    _DISPLAY
+
+    ' Wait for user to press a key
+    SLEEP
+
+    ' Jump to game start
+    GOTO STARTGAME
 END IF
 
 ' Play name entry
