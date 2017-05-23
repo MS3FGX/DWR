@@ -261,19 +261,31 @@ DIM SHARED busnoise&
 DIM SHARED ambientcity&
 DIM SHARED ambientpark&
 DIM SHARED savefile$
+DIM SHARED theme&
+DIM SHARED menubg&
+DIM SHARED reloadsfx&
+DIM SHARED shotsfx&
+DIM SHARED game&
+DIM SHARED over&
 
 ' Load config/save files
 configfile$ = "DATA\DW.INI"
 savefile$ = "DATA\DW.SAV"
 
+' Load game over animation files
+game& = _LOADIMAGE("DATA\IMG\GAME.PNG")
+over& = _LOADIMAGE("DATA\IMG\OVER.PNG")
+shotsfx& = _SNDOPEN("DATA\SFX\SHOT.MP3", "SYNC,VOL")
+
+' Load bus animation files
+buswindows& = _LOADIMAGE("DATA\IMG\BUS.PNG")
+street& = _LOADIMAGE("DATA\IMG\STREET.PNG")
+busnoise& = _SNDOPEN("DATA\SFX\BUS.MP3", "SYNC, VOL")
+
 ' Load images for splash and menus
 dwlogo& = _LOADIMAGE("DATA\IMG\LOGO.PNG")
 menubg& = _LOADIMAGE("DATA\IMG\SPLASH.PNG")
 credits& = _LOADIMAGE("DATA\IMG\CREDITS.PNG")
-
-' Load bus animation images
-buswindows& = _LOADIMAGE("DATA\IMG\BUS.PNG")
-street& = _LOADIMAGE("DATA\IMG\STREET.PNG")
 
 ' Load menu font
 menufont& = _LOADFONT("DATA\IMG\HW.TTF", 30)
@@ -292,10 +304,10 @@ errorsfx& = _SNDOPEN("DATA\SFX\BUZZER.MP3", "SYNC, VOL")
 ' Load ambient sound tracks
 ambientcity& = _SNDOPEN("DATA\SFX\CITY.MP3", "SYNC,VOL")
 ambientpark& = _SNDOPEN("DATA\SFX\PARK.MP3", "SYNC,VOL")
-busnoise& = _SNDOPEN("DATA\SFX\BUS.MP3", "SYNC, VOL")
 
 ' Default sound volumes
 _SNDVOL theme&, 0.3
+_SNDVOL shotsfx&, 0.5
 _SNDVOL ambientcity&, 0.2
 _SNDVOL ambientpark&, 0.2
 
@@ -940,8 +952,8 @@ DO
             NEXT y
             CLOSE #2
     END SELECT
-    IF LEVEL = 99 THEN ENDING
     LEVEL0
+    IF LEVEL = 99 THEN ENDING
 LOOP UNTIL QUIT = 1
 IF GOVER = 1 THEN
     ' Reset vars to default
@@ -2515,99 +2527,7 @@ DO
     A$ = INKEY$
 LOOP WHILE A$ = ""
 
-CLS
-
-SCREEN 12
-IF SKNC = 12 THEN HC = 6
-IF SKNC = 6 THEN HC = 0
-PAINT (1, 1), 11
-CIRCLE (160, 50), 50, 14
-LINE (0, 390)-(640, 390), 14
-PAINT (160, 40), 14
-LINE (400, 50)-(405, 55), 0
-LINE (405, 55)-(410, 50), 0
-LINE (430, 30)-(435, 35), 0
-LINE (435, 35)-(440, 30), 0
-LINE (370, 30)-(375, 35), 0
-LINE (375, 35)-(380, 30), 0
-LINE (0, 200)-(420, 200), 9
-LINE (420, 200)-(0, 300), 9
-PAINT (0, 210), 9
-LINE (421, 201)-(0, 301), 14
-LINE (420, 200)-(640, 200), 14
-PAINT (430, 210), 14
-LINE (500, 320)-(518, 380), PC, BF
-LINE (490, 378)-(518, 388), 15, BF
-LINE (490, 386)-(518, 388), 7, BF
-LINE (500, 260)-(518, 320), JC, BF
-LINE (505, 310)-(515, 315), SKNC, BF
-LINE (505, 310)-(515, 315), 0, B
-LINE (505, 310)-(505, 270), 0
-LINE (515, 310)-(515, 270), 0
-LINE (503, 259)-(517, 255), SKNC, BF
-LINE (500, 255)-(518, 235), SKNC, BF
-LINE (500, 235)-(518, 238), HC, BF
-LINE (514, 238)-(518, 255), HC, BF
-LINE (501, 242)-(503, 244), 15, BF
-PSET (501, 243), 1
-LINE (514, 245)-(515, 247), SKNC, BF
-LINE (500, 252)-(504, 252), 0
-LINE (600, 160)-(640, 210), 6, BF
-LINE (590, 165)-(640, 143), 6
-PAINT (630, 155), 6
-LINE (602, 170)-(612, 180), 0, BF
-LINE (622, 175)-(638, 210), 0, BF
-LINE (0, 390)-(640, 400), 15, BF
-LINE (10, 400)-(640, 400), 0
-LINE (0, 390)-(10, 480), 15, BF
-LINE (10, 400)-(10, 470), 0
-LINE (630, 390)-(640, 480), 15, BF
-LINE (630, 400)-(630, 470), 0
-LINE (0, 470)-(640, 480), 15, BF
-LINE (10, 470)-(630, 470), 0
-PAINT (12, 412), 0
-LOCATE 26, 4
-PRINT "Ahh, this is the life, "; NAME$; "!!"
-LOCATE 28, 4
-PRINT "See you in the next game, bitch!"
-DO
-    A$ = INKEY$
-LOOP WHILE A$ = ""
-SCREEN 13
-CLS
-LINE (0, 0)-(320, 10), 7, BF
-LINE (0, 0)-(10, 200), 7, BF
-LINE (310, 0)-(320, 200), 7, BF
-LINE (0, 190)-(320, 200), 7, BF
-LOCATE 12, 9
-PRINT "To get Passcodes, go to:"
-LOCATE 14, 10
-PRINT "pub55.ezboard.com/brgc"
-DO
-    A$ = INKEY$
-LOOP WHILE A$ = ""
-CLS
 GAMEOVER
-END SUB
-
-SUB GAMEOVER
-CLS
-SCREEN 9, 0, 1, 0
-sx2% = 515
-sx% = -20
-FOR C = 1 TO 45
-    sx% = sx% + 4
-    sx2% = sx2% - 4
-    CLS
-    CALL NeatFont("Game", sx%, 140, 15, 9, 5)
-    CALL NeatFont("Over", sx2%, 140, 15, 9, 5)
-    PCOPY 1, 0
-NEXT C
-DO
-    A$ = INKEY$
-LOOP WHILE A$ = ""
-GOVER = 1
-QUIT = 1
 END SUB
 
 SUB LEVEL0
@@ -2968,6 +2888,48 @@ END SUB
 
 ' New functions start here
 
+' Game over animation
+SUB GAMEOVER
+CLS
+SCREEN _NEWIMAGE(800, 600, 32)
+
+' Stop ambient sounds and play theme
+STOPAMBIENT
+_SNDPLAY theme&
+
+' Begin animation
+OFFSET = 25
+FRAME = -600
+DO
+    _PUTIMAGE (0, 0), menubg&
+    _PUTIMAGE (0, (FRAME - OFFSET)), game&
+    _PUTIMAGE (0, -(FRAME - OFFSET)), over&
+    _DELAY .000001
+
+    ' Update display and increment counter
+    _DISPLAY
+    FRAME = FRAME + 1
+LOOP UNTIL FRAME = 0
+
+' Play sound effects
+_SNDPLAY shotsfx&
+_DELAY 0.9
+_SNDPLAY reloadsfx&
+
+' Wait for user input
+SLEEP
+
+' Stop theme loop
+_SNDSTOP theme&
+
+' Update screen before restart
+_AUTODISPLAY
+
+' Trigger restart
+QUIT = 1
+R = 1
+END SUB
+
 ' Stop background audio tracks
 SUB STOPAMBIENT
 _SNDSTOP ambientpark&
@@ -3147,7 +3109,4 @@ ELSEIF SELECTION = 4 THEN
     PRINT "Back"
 END IF
 END SUB
-
-
-
 
