@@ -1,6 +1,10 @@
-REM: Dope Wars: Resurrection
-REM: This software is released under the BSD license, see LICENSE for details
+' Dope Wars: Resurrection
+' This software is released under the BSD license, see LICENSE for details
+
+_TITLE "Dope Wars: Resurrection"
 $RESIZE:SMOOTH
+
+' Start variable declarations
 DECLARE SUB DRAWBACKGROUND ()
 DECLARE SUB LEVEL0 ()
 DECLARE SUB MAPLEVEL ()
@@ -245,6 +249,9 @@ CLOSE #2
 GET (1, 1)-(20, 20), BANKTILE%()
 
 CLS
+' Create screen
+SCREEN _NEWIMAGE(800, 600, 32)
+
 PRINT "LOADING..."
 
 ' Variables used in SUBs need to be defined shared
@@ -271,6 +278,10 @@ street& = _LOADIMAGE("DATA\IMG\STREET.PNG")
 ' Load menu font
 menufont& = _LOADFONT("DATA\IMG\HW.TTF", 30)
 
+' Apply font/color
+_FONT menufont&
+COLOR &HFFFCFCFC, &H000000FF
+
 ' Load sounds for splash and menus
 theme& = _SNDOPEN("DATA\SFX\THEME.MP3", "SYNC,VOL")
 reloadsfx& = _SNDOPEN("DATA\SFX\RELOAD.MP3", "SYNC,VOL")
@@ -295,13 +306,6 @@ START:
 CLS
 ' Start playing menu music
 _SNDPLAY theme&
-
-' Create screen
-SCREEN _NEWIMAGE(800, 600, 32)
-
-' Load font/color
-_FONT menufont&
-COLOR &HFFFCFCFC, &H000000FF
 
 ' Show splash screen
 _PUTIMAGE (0, 0), menubg&
@@ -437,17 +441,18 @@ ELSE
     DRAW_MAIN_MENU (0)
 
     ' Highlight new game
-    LOCATE 12, 260
+    LOCATE 12, 250
     COLOR &HFFFCFCFC
     PRINT "New Game"
-    LOCATE 14, 250
+    LOCATE 14, 260
     COLOR &HFFFFF933
     PRINT "Load Game"
     LOCATE 16, 250
+    COLOR &HFFFCFCFC
     PRINT "Back"
 
     ' Prompt
-    LOCATE 12, 480
+    LOCATE 14, 480
     COLOR &HFFF70031
     PRINT "No saved game found!"
 
