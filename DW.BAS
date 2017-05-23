@@ -285,8 +285,8 @@ _SNDVOL theme&, 0.3
 _SNDVOL ambientcity&, 0.2
 _SNDVOL ambientpark&, 0.2
 
-' Load saved game ?
-'LOADGAME
+' Load saved game now so cheats can be applied
+LOADGAME
 
 ' Title screen/menus
 START:
@@ -471,23 +471,7 @@ DO
 LOOP UNTIL LEN(NAME$) <= 10 AND LEN(NAME$) > 0
 
 ' Load default values before launching game
-' DEFAULT GAME VALUES
-LEVEL = 0
-PlayerX% = 7
-PlayerY% = 6
-BALANCE = 0
-IF DIF = 0 THEN DIF = 1
-IF DIF = 1 THEN MONEY = 5000
-IF DIF = 2 THEN MONEY = 2500
-IF DIF = 3 THEN MONEY = 500
-POT = 0
-ECSTACY = 0
-CRACK = 0
-ACID = 0
-COKE = 0
-HASH = 0
-HEROIN = 0
-MUSHROOMS = 0
+LOADDEFAULTS
 
 ' Jump to game start
 GOTO DWSTART
@@ -626,13 +610,19 @@ _DISPLAY
 
 ' Check if it's a known code
 CODEERROR = 0
+
 ' Convert to upper case
 CODE$ = UCASE$(CODE$)
 
-' CODELIST
+' CHEATLIST
 IF CODE$ = "I NEED TO WIN" THEN
     MONEY = 1500000
     CRACK = 1000000
+ELSEIF CODE$ = "CLEAN SLATE" THEN
+    ' Reset game save to defaults
+    NAME$ = ""
+    LOADDEFAULTS
+    SAVEGAME
 ELSEIF CODE$ = "TUMBLEWEED" THEN
     POT = 10000
 ELSEIF CODE$ = "XBOX" THEN
@@ -676,6 +666,9 @@ END IF
 LOCATE 16, 480
 COLOR &HFFFFF933
 IF CODEERROR = 0 THEN
+    ' Save game to apply the new vars
+    SAVEGAME
+    ' Print message and play sound
     PRINT "Cheat Activated"
     _SNDPLAY chingsfx&
 ELSE
@@ -894,30 +887,18 @@ DO
     LEVEL0
 LOOP UNTIL QUIT = 1
 IF GOVER = 1 THEN
-    CLEAR
-    OPEN "DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
-    WRITE #1, LEVEL
-    WRITE #1, PlayerX%
-    WRITE #1, PlayerY%
-    WRITE #1, NAME$
-    WRITE #1, MONEY
-    WRITE #1, BALANCE
-    WRITE #1, DIF
-    WRITE #1, POT
-    WRITE #1, ECSTACY
-    WRITE #1, CRACK
-    WRITE #1, ACID
-    WRITE #1, COKE
-    WRITE #1, HASH
-    WRITE #1, HEROIN
-    WRITE #1, MUSHROOMS
-    WRITE #1, SKNC
-    WRITE #1, JC
-    WRITE #1, SC
-    WRITE #1, PC
-    CLOSE #1
+    ' Reset vars to default
+    LOADDEFAULTS
+
+    ' Save game
+    SAVEGAME
+
 END IF
-IF R = 1 THEN GOTO DopeStart
+' Attempt to restart game
+IF R = 1 THEN
+    GOTO DopeStart
+END IF
+
 END
 
 SUB BANK
@@ -1426,29 +1407,10 @@ IF A$ = "O" THEN GOTO OPTIONS2
 IF A$ = "o" THEN GOTO OPTIONS2
 
 IF A$ = "V" OR A$ = "v" THEN
+    ' Save the game
+    SAVEGAME
 
-    OPEN "DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
-    WRITE #1, LEVEL
-    WRITE #1, PlayerX%
-    WRITE #1, PlayerY%
-    WRITE #1, NAME$
-    WRITE #1, MONEY
-    WRITE #1, BALANCE
-    WRITE #1, DIF
-    WRITE #1, POT
-    WRITE #1, ECSTACY
-    WRITE #1, CRACK
-    WRITE #1, ACID
-    WRITE #1, COKE
-    WRITE #1, HASH
-    WRITE #1, HEROIN
-    WRITE #1, MUSHROOMS
-    WRITE #1, SKNC
-    WRITE #1, JC
-    WRITE #1, SC
-    WRITE #1, PC
-    CLOSE #1
-
+    ' Print message
     LOCATE 22, 2
     PRINT "                                     "
 
@@ -1570,33 +1532,12 @@ DO
     A$ = INKEY$
 
     IF A$ = "S" OR A$ = "s" THEN
-
-        OPEN "DATA\DOPEWARS.DAT" FOR OUTPUT AS #1
-        WRITE #1, LEVEL
-        WRITE #1, PlayerX%
-        WRITE #1, PlayerY%
-        WRITE #1, NAME$
-        WRITE #1, MONEY
-        WRITE #1, BALANCE
-        WRITE #1, DIF
-        WRITE #1, POT
-        WRITE #1, ECSTACY
-        WRITE #1, CRACK
-        WRITE #1, ACID
-        WRITE #1, COKE
-        WRITE #1, HASH
-        WRITE #1, HEROIN
-        WRITE #1, MUSHROOMS
-        WRITE #1, SKNC
-        WRITE #1, JC
-        WRITE #1, SC
-        WRITE #1, PC
-        CLOSE #1
+        ' save the game
+        SAVEGAME
 
         QUIT = 1
 
     END IF
-
 
     IF A$ = "E" THEN QUIT = 1
     IF A$ = "e" THEN QUIT = 1
@@ -2970,6 +2911,26 @@ END SUB
 
 ' New functions start here
 
+' Return game variables to default
+SUB LOADDEFAULTS
+LEVEL = 0
+PlayerX% = 7
+PlayerY% = 6
+BALANCE = 0
+IF DIF = 0 THEN DIF = 1
+IF DIF = 1 THEN MONEY = 5000
+IF DIF = 2 THEN MONEY = 2500
+IF DIF = 3 THEN MONEY = 500
+POT = 0
+ECSTACY = 0
+CRACK = 0
+ACID = 0
+COKE = 0
+HASH = 0
+HEROIN = 0
+MUSHROOMS = 0
+END SUB
+
 ' Function to load a saved game
 SUB LOADGAME
 IF _FILEEXISTS(savefile$) THEN
@@ -2989,10 +2950,29 @@ IF _FILEEXISTS(savefile$) THEN
     INPUT #1, HASH
     INPUT #1, HEROIN
     INPUT #1, MUSHROOMS
-    INPUT #1, SKNC
-    INPUT #1, JC
-    INPUT #1, SC
-    INPUT #1, PC
+    CLOSE #1
+END IF
+END SUB
+
+' Function to save game
+SUB SAVEGAME
+IF _FILEEXISTS(savefile$) THEN
+    OPEN savefile$ FOR OUTPUT AS #1
+    WRITE #1, LEVEL
+    WRITE #1, PlayerX%
+    WRITE #1, PlayerY%
+    WRITE #1, NAME$
+    WRITE #1, MONEY
+    WRITE #1, BALANCE
+    WRITE #1, DIF
+    WRITE #1, POT
+    WRITE #1, ECSTACY
+    WRITE #1, CRACK
+    WRITE #1, ACID
+    WRITE #1, COKE
+    WRITE #1, HASH
+    WRITE #1, HEROIN
+    WRITE #1, MUSHROOMS
     CLOSE #1
 END IF
 END SUB
