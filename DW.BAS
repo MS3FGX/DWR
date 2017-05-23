@@ -958,10 +958,10 @@ LOOP UNTIL QUIT = 1
 IF GOVER = 1 THEN
     ' Reset vars to default
     LOADDEFAULTS
+    NAME$ = ""
 
     ' Save game
     SAVEGAME
-
 END IF
 ' Attempt to restart game
 IF R = 1 THEN
@@ -2603,7 +2603,15 @@ DO
 
 
     IF A$ = CHR$(0) + CHR$(72) AND BPROX = 1 THEN BUS: GOTO DONE0
-    IF A$ = CHR$(0) + CHR$(72) AND BANKPROX = 1 THEN BANK: GOTO START0
+    IF A$ = CHR$(0) + CHR$(72) AND BANKPROX = 1 THEN
+        BANK
+        ' If we don't check this, the game will try to continue after a failed bank robbery
+        IF QUIT = 0 THEN
+            GOTO START0
+        ELSE
+            GOVER = 1
+        END IF
+    END IF
 
     IF A$ = CHR$(0) + CHR$(72) AND MAP%(PlayerX%, PlayerY% - 1) < 10 THEN
         DRAWBACKGROUND
